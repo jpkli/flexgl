@@ -1,0 +1,28 @@
+{
+  "name": "flexgl",
+  "version": "0.1.0",
+  "description": "A wraper library for WebGL.",
+  "main": "flexgl.js",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpkli/flexgl.git"
+  },
+  "keywords": [
+    "webgl",
+    "gpu",
+    "html5"
+  ],
+  "author": "Kelvin Li",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpkli/flexgl/issues"
+  },
+  "homepage": "https://github.com/jpkli/flexgl#readme"
+}
