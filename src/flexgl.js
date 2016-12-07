@@ -7,8 +7,7 @@ define(function(require){
 
     return function FlexGL(arg){
         'use strict';
-        var
-            flexgl = (this instanceof FlexGL) ? this : {},
+        var flexgl = (this instanceof FlexGL) ? this : {},
             options = arg || {},
             containerId = options.container || "body",
             canvas = options.canvas || document.createElement("canvas"),
@@ -42,16 +41,14 @@ define(function(require){
             framebuffers = new Framebuffer(ctx),
             shaders = new Shader(ctx, resources, env);
 
+        var blendExt = ctx.getExtension("EXT_blend_minmax");
+        ctx.MAX_EXT = blendExt.MAX_EXT;
+        ctx.MIN_EXT = blendExt.MIN_EXT;
         ctx.ext = ctx.getExtension("ANGLE_instanced_arrays");
         enableExtension([
             "OES_texture_float",
             "OES_texture_float_linear",
-            // "EXT_blend_minmax"
         ]);
-
-        // var blendExt = ctx.getExtension("EXT_blend_minmax");
-        // ctx.MAX_EXT = blendExt.MAX_EXT;
-        // ctx.MIN_EXT = blendExt.MIN_EXT;
 
         if(containerId == "body") {
             document.getElementsByTagName(containerId)[0].appendChild(canvas);
@@ -185,31 +182,33 @@ define(function(require){
         flexgl.shader.vertex = function(fn){
             var options = {type: "vertex"};
             if(fn.name) options.name = fn.name;
-            shaders.create(options, fn);
-            return flexgl;
+            return shaders.create(options, fn);
         }
 
         flexgl.shader.fragment = function(fn){
             var options = {type: "fragment"};
             if(fn.name) options.name = fn.name;
-            shaders.create(options, fn);
-            return flexgl;
+            return shaders.create(options, fn);
         }
 
-        flexgl.program = function(name, vertexShaderName, fragmentShaderName, framebufferName) {
+        flexgl.program = function(name, vs, fs, framebufferName) {
             var name = name || "default",
-                vs = vertexShaderName || "default",
-                fs = fragmentShaderName || "default",
+                vs= vs|| "default",
+                fs = fs || "default",
                 deps = [];
 
             if(!kernels.hasOwnProperty(name)) {
 
-                if(!shaders.vertex.hasOwnProperty(vs) || !shaders.fragment.hasOwnProperty(fs))
-                    throw new Error("No vertex or fragment shader is provided!");
-
                 kernels[name] = ctx.createProgram();
-                ctx.attachShader(kernels[name], shaders.vertex[vs]);
-                ctx.attachShader(kernels[name], shaders.fragment[fs]);
+
+                var vertShader = (typeof vs == "object") ? vs : shaders.vertex[vs],
+                    fragShader = (typeof fs == "object") ? fs : shaders.fragment[fs];
+
+                // if(!shaders.vertex.hasOwnProperty(vs) || !shaders.fragment.hasOwnProperty(fs))
+                //     throw new Error("No vertex or fragment shader is provided!");
+
+                ctx.attachShader(kernels[name], vertShader);
+                ctx.attachShader(kernels[name], fragShader);
                 ctx.linkProgram(kernels[name]);
                 var linked = ctx.getProgramParameter(kernels[name], ctx.LINK_STATUS);
                 if (!linked) {
@@ -219,8 +218,8 @@ define(function(require){
                     return null;
                 }
 
-                deps = deps.concat(shaders.vertex[vs].deps);
-                deps = deps.concat(shaders.fragment[fs].deps);
+                deps = deps.concat(vertShader.deps);
+                deps = deps.concat(fragShader.deps);
                 kernels[name].deps = deps;
             }
 
