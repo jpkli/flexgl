@@ -1,0 +1,35 @@
+if(typeof(define) !== 'function') var define = require('amdefine')(module);
+
+define(function(require){
+    return function Subroutine() {
+        "use strict";
+        var subroutine = (this instanceof Subroutine) ? this : {};
+
+        subroutine.create = function(name, type, fn) {
+            console.log(fn);
+            subroutine[name] = {
+                name: name,
+                type: type || 'float',
+                fn: fn,
+                resourceType: "subroutine"
+            };
+
+            subroutine[name].link = function(program) {
+                return this;
+            }
+
+            subroutine[name].load = function(fn) {
+                subroutine[name].fn = fn;
+                return this;
+            }
+
+            subroutine[name].header = function() {
+                return this.fn.toString();
+            }
+
+            return subroutine[name];
+        };
+
+        return subroutine;
+    }
+});

@@ -4,7 +4,8 @@ define(function(require){
     var Uniform = require('./uniform'),
         Attribute = require('./attribute'),
         Texture = require('./texture'),
-        Varying = require('./varying');
+        Varying = require('./varying'),
+        Subroutine = require('./subroutine');
 
     return function Resource(glContext){
         'use strict';
@@ -16,8 +17,9 @@ define(function(require){
         resource.attribute = new Attribute(ctx);
         resource.texture = new Texture(ctx);
         resource.varying = new Varying(ctx);
+        resource.subroutine = new Subroutine();
 
-        var resourceTypes = ['uniform', 'attribute', 'texture', 'varying'];
+        var resourceTypes = ['uniform', 'attribute', 'texture', 'varying', 'subroutine'];
 
         resource.allocate = function(type, props) {
             if(resourceTypes.indexOf(type) === -1)

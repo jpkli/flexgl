@@ -31,10 +31,15 @@ define(function(require){
                 .replace(/\$(.*)\((.*)\)\s*(=|;)/g, "$1 $2 $3");
                 // .replace(/\$(.*?)\./g, "$1 ")
 
-            if(name == "main")
+            if(name == "main") {
                 glsl = glsl.replace(/function.+\(\s*([\s\S]*?)\s*{/, '){') + "\n";
-            else
-                glsl = glsl.replace(/function.+\(\s*([\s\S]*?)\s*{/, '$1{') + "\n";
+            } else {
+                var args = glsl.match(/function.+\(\s*([\s\S]*?)\s*\)/)[1];
+                if(args != "") {
+                    args = args.replace(/\$([\w|\d]+)_/g, "$1 ");
+                }
+                glsl = glsl.replace(/function.+\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
+            }
 
             return glsl;
         }
@@ -85,12 +90,20 @@ define(function(require){
 
             if(Array.isArray(deps)){
                 deps.forEach(function(dep){
-                    shaderSource += resource.get(dep).header();
+                    var res = resource.get(dep);
+                    if(res.resourceType == "subroutine")
+                        shaderSource += toGLSL(res.type, res.name, res.fn);
+                    else
+                        shaderSource += res.header();
                 });
             } else if(typeof(deps) == "object") {
                 Object.keys(deps).forEach(function(resourceType){
                     deps[resourceType].forEach(function(dep){
-                        shaderSource += resource.get(dep).header();
+                        var res = resource.get(dep);
+                        if(res.resourceType == "subroutine")
+                            shaderSource += toGLSL(res.type, res.name, res.fn);
+                        else
+                            shaderSource += res.header();
                     });
                 })
             }

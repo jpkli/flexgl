@@ -151,12 +151,12 @@ define(function(require){
             ctx.bindFramebuffer(ctx.FRAMEBUFFER, framebuffers[fbName].ptr);
         }
 
-        flexgl.sharedFunction = function(name, type, content) {
-            sharedFunction[name] = {type: type, fn: content};
+        flexgl.subroutine = function(name, type, fn) {
+            resources.allocate("subroutine", name, type, fn);
             return flexgl;
         }
 
-        flexgl.env = function(keyValuePairs) {
+        flexgl.parameter= function(keyValuePairs) {
             Object.keys(keyValuePairs).forEach(function(key){
                 env[key] = keyValuePairs[key];
                 if(Array.isArray(env[key])){
@@ -172,6 +172,8 @@ define(function(require){
             })
             return flexgl;
         }
+
+        flexgl.env = flexgl.parameter;
 
         flexgl.shader = function(arg, fn){
             var options = arg;
