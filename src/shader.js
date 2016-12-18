@@ -18,10 +18,22 @@ define(function(require){
 
         function applyEnvParameters(str){
             //find all $(...) and replace them with parameters
-            var re = new RegExp("\\$\\(("+Object.keys(parameters).join("|")+")\\)","g");
-            return str.replace(re, function(matched){
-                return parameters[matched.slice(2,matched.length-1)];
-            });
+            var envParam = Object.keys(parameters);
+            if(envParam.length > 0){
+                var re = new RegExp("\\$\\(("+envParam.join("|")+")\\)","g");
+                str = str.replace(re, function(matched){
+                    return parameters[matched.slice(2,matched.length-1)];
+                });
+            }
+
+            // Make uniforms to be used as parameters in shaders, like $(uniformName)
+            // var envUniforms = Object.keys(resource.uniform);
+            // re = new RegExp("\\$\\(("+envUniforms.join("|")+")\\)","g");
+            // str = str.replace(re, function(matched){
+            //     return resource.uniform[matched.slice(2,matched.length-1)].data;
+            // });
+
+            return str;
         }
 
         function toGLSL(returnType, name, fn){
@@ -75,6 +87,16 @@ define(function(require){
             });
         }
 
+        function declareDep(dep) {
+            var res = resource.get(dep);
+            if(typeof res === 'undefined')
+                throw new Error('Resource/dependence "' + dep + '" is not found.');
+            if(res.resourceType == 'subroutine')
+                return toGLSL(res.type, res.name, res.fn);
+            else
+                return res.header();
+        }
+
         shader.create = function(arg, fn){
             var option = arg || {},
                 name = option.name || "default",
@@ -90,32 +112,22 @@ define(function(require){
 
             if(Array.isArray(deps)){
                 deps.forEach(function(dep){
-                    var res = resource.get(dep);
-                    if(res.resourceType == "subroutine")
-                        shaderSource += toGLSL(res.type, res.name, res.fn);
-                    else
-                        shaderSource += res.header();
+                    shaderSource += declareDep(dep);
                 });
-            } else if(typeof(deps) == "object") {
+            } else if(typeof(deps) == 'object') {
                 Object.keys(deps).forEach(function(resourceType){
                     deps[resourceType].forEach(function(dep){
-                        var res = resource.get(dep);
-                        if(res.resourceType == "subroutine")
-                            shaderSource += toGLSL(res.type, res.name, res.fn);
-                        else
-                            shaderSource += res.header();
+                        shaderSource += declareDep(dep);
                     });
                 })
             }
 
-            shaderSource += toGLSL("void", "main", main);
-
-            if(debug)
-                console.log(shaderSource);
-
+            shaderSource += toGLSL('void', 'main', main);
+            if(debug) console.log(shaderSource);
             var _shader = compile(shaderType[type], shaderSource);
             _shader._shaderType = shaderType[type];
             _shader.deps = deps;
+            _shader.source = shaderSource;
             shader[type][name] = _shader;
             return _shader;
         }

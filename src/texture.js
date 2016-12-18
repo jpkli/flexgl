@@ -62,7 +62,7 @@ define(function(require){
             };
 
             // if(data !== null && data.length)
-                setTexture(name, data);
+            setTexture(name, data);
 
             texture[name].link = function(program) {
                 if(this.data !== null) {
@@ -82,6 +82,11 @@ define(function(require){
             texture[name].update = function(texData, offset, dim) {
                 updateTexture(this.name, texData, offset, dim);
                 return this;
+            }
+
+            texture[name].resize = function(dim, data) {
+                this.dim = dim;
+                setTexture(this.name, data);
             }
 
             texture[name].header = function() {

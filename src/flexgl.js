@@ -42,8 +42,11 @@ define(function(require){
             shaders = new Shader(ctx, resources, env);
 
         var blendExt = ctx.getExtension("EXT_blend_minmax");
-        ctx.MAX_EXT = blendExt.MAX_EXT;
-        ctx.MIN_EXT = blendExt.MIN_EXT;
+        if(blendExt) {
+            ctx.MAX_EXT = blendExt.MAX_EXT;
+            ctx.MIN_EXT = blendExt.MIN_EXT;
+        }
+
         ctx.ext = ctx.getExtension("ANGLE_instanced_arrays");
         enableExtension([
             "OES_texture_float",
@@ -97,13 +100,15 @@ define(function(require){
 
         flexgl.uniform = function(name, type, data) {
             resources.allocate("uniform", name, type, data);
-            Object.defineProperty(flexgl.uniform, name, {
-                get: function() { return resources.uniform[name]; },
-                set: function(data) {
-                    resources.uniform[name].load(data);
-                    resources.uniform[name].link(program);
-                }
-            });
+            if(!flexgl.uniform.hasOwnProperty(name)){
+                Object.defineProperty(flexgl.uniform, name, {
+                    get: function() { return resources.uniform[name]; },
+                    set: function(data) {
+                        resources.uniform[name].load(data);
+                        resources.uniform[name].link(program);
+                    }
+                });
+            }
             return flexgl;
         };
 
@@ -137,9 +142,11 @@ define(function(require){
         flexgl.framebuffer = function(name, type, dim) {
             var texture = resources.allocate('texture', name, type, dim, 'rgba', null);
             framebuffers.create(name, type, dim, texture);
-            Object.defineProperty(flexgl.framebuffer, name, {
-                get: function() { return framebuffers[name]; }
-            });
+            if(!flexgl.framebuffer.hasOwnProperty(name)){
+                Object.defineProperty(flexgl.framebuffer, name, {
+                    get: function() { return framebuffers[name]; }
+                });
+            }
             return flexgl;
         }
 

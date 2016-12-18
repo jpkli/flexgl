@@ -6,7 +6,6 @@ define(function(require){
         var subroutine = (this instanceof Subroutine) ? this : {};
 
         subroutine.create = function(name, type, fn) {
-            console.log(fn);
             subroutine[name] = {
                 name: name,
                 type: type || 'float',
