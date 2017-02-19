@@ -20,7 +20,8 @@ define(function(require){
             }
 
             if(framebuffer[name].texture === null) {
-                framebuffer[name].texture = Texture(ctx).create(name, type, dim, "rgba", new Float32Array(width*height));
+                var buf = (type == 'float') ? new Float32Array(dim[0]*dim[1]*4) : new Uint8Array(dim[0]*dim[1]*4);
+                framebuffer[name].texture = Texture(ctx).create(name, type, dim, "rgba", buf);
             }
 
             var renderbuffer = framebuffer[name].renderbuffer;

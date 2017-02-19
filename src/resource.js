@@ -28,6 +28,13 @@ define(function(require){
             var res = resource[type].create.apply(null, Array.prototype.slice.call(arguments, 1));
             res.resourceType = type;
             gpuResources[res.name] = res;
+            if(!gpuResources.hasOwnProperty(res.name)) {
+                
+                Object.defineProperty(gpuResources, res.name, {
+                    get: function() { return gpuResources[res.name];},
+                    set: function(data) { gpuResources[res.name].load(data); }
+                });
+            }
             return res;
         };
 

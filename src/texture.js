@@ -1,6 +1,7 @@
 if(typeof(define) !== 'function') var define = require('amdefine')(module);
 
 define(function(require){
+    var Uniform = require('./uniform');
     return function Texture(glContext) {
         "use strict";
         var texture = (this instanceof Texture) ? this : {},
@@ -14,6 +15,7 @@ define(function(require){
                 height = texture[name].dim[1];
 
             texture[name].data = texData;
+
             ctx.bindTexture(ctx.TEXTURE_2D, texture[name].ptr);
             ctx.texImage2D(ctx.TEXTURE_2D, 0, format, width, height, 0, format, type, texData);
             ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MIN_FILTER, ctx.NEAREST);
@@ -48,8 +50,7 @@ define(function(require){
             ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MIN_FILTER, ctx.LINEAR);
         }
 
-        texture.create = function(name, type, dim, channel, data) {
-
+        texture.create = function(name, type, dim, channel, data, sampler) {
             texture[name] = {
                 name: name,
                 index: textureID++,
@@ -58,18 +59,24 @@ define(function(require){
                 channel: channel || "alpha",
                 data: null,
                 location: null,
+                sampler: sampler || null,
                 ptr: ctx.createTexture()
             };
 
             // if(data !== null && data.length)
             setTexture(name, data);
 
+            if(texture[name].sampler === null) {
+                texture[name].sampler = Uniform(ctx).create(name, 'sampler2D', texture[name]);
+            }
+
             texture[name].link = function(program) {
                 if(this.data !== null) {
-                    ctx.activeTexture(ctx.TEXTURE0 + this.index);
-                    ctx.bindTexture(ctx.TEXTURE_2D, this.ptr);
-                    this.location = ctx.getUniformLocation(program, this.name);
-                    ctx.uniform1i(this.location, this.index);
+                    // ctx.activeTexture(ctx.TEXTURE0 + this.index);
+                    // ctx.bindTexture(ctx.TEXTURE_2D, this.ptr);
+                    // this.location = ctx.getUniformLocation(program, this.name);
+                    // ctx.uniform1i(this.location, this.index);
+                    this.sampler.link(program);
                 }
                 return this;
             }
@@ -89,8 +96,12 @@ define(function(require){
                 setTexture(this.name, data);
             }
 
+            texture[name].delete = function() {
+                glContext.deleteTexture(this.ptr);
+            }
+
             texture[name].header = function() {
-                return 'uniform sampler2D ' + this.name + ';\n';
+                return 'uniform sampler2D ' + this.sampler.name + ';\n';
             }
 
             return texture[name];

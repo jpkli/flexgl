@@ -9,12 +9,12 @@ define(function(require){
         'use strict';
         var flexgl = (this instanceof FlexGL) ? this : {},
             options = arg || {},
-            containerId = options.container || "body",
+            container = options.container || document.body,
             canvas = options.canvas || document.createElement("canvas"),
-            width = options.width || 400,
-            height = options.height || 300,
+            width = options.width || null,
+            height = options.height || null,
             padding = options.padding || {left: 0, right: 0, top: 0, bottom: 0},
-            ctx = null,
+            ctx = options.context || options.ctx || null,
             kernels = {},
             program = null,
             env = options.env || {},
@@ -25,6 +25,11 @@ define(function(require){
             if(canvas[0] == "#") canvas = document.getElementById(cavnas.substring(1));
             else canvas = document.getElementById(cavnas);
         }
+        if(container) {
+            container = (typeof(container) == "string") ? document.getElementById(container) : container;
+            if(width === null) width = container.clientWidth;
+            if(height === null) height = container.clientHeight;
+        }
 
         canvas.width = width ;
         canvas.height = height ;
@@ -33,7 +38,8 @@ define(function(require){
         canvas.style.marginLeft = padding.left + "px";
         canvas.style.marginTop = padding.top + "px";
 
-        ctx = setupWebGL(canvas);
+        if(ctx === null)
+            ctx = setupWebGL(canvas);
         flexgl.ctx = ctx;
         flexgl.canvas = canvas;
 
@@ -53,13 +59,7 @@ define(function(require){
             "OES_texture_float_linear",
         ]);
 
-        if(containerId == "body") {
-            document.getElementsByTagName(containerId)[0].appendChild(canvas);
-        } else {
-            document.getElementById(containerId).appendChild(canvas);
-
-        }
-
+        container.appendChild(canvas);
         function setupWebGL(canvas) {
             var names = ["webgl", "experimental-webgl"];
             var gl = null;
@@ -120,8 +120,8 @@ define(function(require){
             return sa;
         }
 
-        flexgl.texture = function(name, type, data, dim, channel){
-            resources.allocate("texture", name, type, dim, channel, data);
+        flexgl.texture = function(name, type, data, dim, channel, sampler){
+            resources.allocate("texture", name, type, dim, channel, data, sampler);
             Object.defineProperty(flexgl.texture, name, {
                 get: function() { return resources.texture[name]; },
                 set: function(data) { resources.texture[name].load(data); }
@@ -141,6 +141,7 @@ define(function(require){
 
         flexgl.framebuffer = function(name, type, dim) {
             var texture = resources.allocate('texture', name, type, dim, 'rgba', null);
+
             framebuffers.create(name, type, dim, texture);
             if(!flexgl.framebuffer.hasOwnProperty(name)){
                 Object.defineProperty(flexgl.framebuffer, name, {
@@ -155,7 +156,10 @@ define(function(require){
         }
 
         flexgl.bindFramebuffer = function(fbName) {
-            ctx.bindFramebuffer(ctx.FRAMEBUFFER, framebuffers[fbName].ptr);
+            if(fbName === null)
+                ctx.bindFramebuffer(ctx.FRAMEBUFFER, null);
+            else
+                ctx.bindFramebuffer(ctx.FRAMEBUFFER, framebuffers[fbName].ptr);
         }
 
         flexgl.subroutine = function(name, type, fn) {
@@ -241,6 +245,8 @@ define(function(require){
         flexgl.dimension = function() {
             return [canvas.width, canvas.height];
         }
+
+        flexgl.resources = resources;
 
         return flexgl;
     }
