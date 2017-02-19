@@ -37,9 +37,11 @@ define(function(require){
         }
 
         function toGLSL(returnType, name, fn){
+
             var glsl = returnType + ' ' +
                 name + '(' + applyEnvParameters(fn.toString())
                 .replace(/var\s/g, 'float ')
+                .replace(/this./g, '')
                 .replace(/\$(.*)\((.*)\)\s*(=|;)/g, "$1 $2 $3");
                 // .replace(/\$(.*?)\./g, "$1 ")
 
@@ -47,10 +49,13 @@ define(function(require){
                 glsl = glsl.replace(/function.+\(\s*([\s\S]*?)\s*{/, '){') + "\n";
             } else {
                 var args = glsl.match(/function.+\(\s*([\s\S]*?)\s*\)/)[1];
+
                 if(args != "") {
                     args = args.replace(/\$([\w|\d]+)_/g, "$1 ");
                 }
-                glsl = glsl.replace(/function.+\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
+                glsl = glsl
+                    .replace(/function.+\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
+
             }
 
             return glsl;
@@ -78,13 +83,34 @@ define(function(require){
         }
 
         function getDeps(fn) {
-            var args = fn.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+            var sourceCode = fn.toString(),
+                args = sourceCode.match(/function\s.*?\(([^)]*)\)/)[1];
             // args = args.replace(/(?:\r\n|\r|\n|\s)/g, '');
-            return args.split(',').map(function(arg) {
+            var deps = args.split(',').map(function(arg) {
                 return arg.replace(/\/\*.*\*\//, '').trim();
             }).filter(function(arg) {
                 return arg;
             });
+
+            var extraDeps = getExtraDeps(sourceCode);
+            if(extraDeps.length) {
+                deps = deps.concat(extraDeps
+                .filter(function(d){
+                    return deps.indexOf(d) === -1;
+                }))
+            }
+
+            return deps;
+        }
+
+        function getExtraDeps(fnString) {
+            var extraDeps = fnString.match(/this\.(\w+)/g);
+            if(extraDeps !== null) {
+                extraDeps = extraDeps.map(function(d){
+                    return d.slice(5);
+                });
+            }
+            return extraDeps || [];
         }
 
         function declareDep(dep) {
@@ -97,6 +123,16 @@ define(function(require){
                 return res.header();
         }
 
+        function uniqueDeps(deps) {
+            var names = {};
+            deps.forEach(function(d, i){
+                names[d] = i;
+            });
+
+            return Object.keys(names);
+        }
+
+
         shader.create = function(arg, fn){
             var option = arg || {},
                 name = option.name || "default",
@@ -108,7 +144,36 @@ define(function(require){
 
             var shaderSource = 'precision ' + precision + 'p float;\n';
 
-            if(deps.length === 0) deps = getDeps(main);
+            if(deps.length === 0) deps = uniqueDeps(getDeps(main));
+
+            //get dependence from subroutines if any
+            var extraDeps = [],
+                subRoutines = [];
+
+            deps.forEach(function(dep){
+                var res = resource.get(dep);
+                if(res.resourceType == 'subroutine') {
+                    subRoutines.push(res.name);
+                    var subDeps = getExtraDeps(res.fn.toString());
+                    if(subDeps.length) {
+                        extraDeps = extraDeps.concat(subDeps);
+                    }
+                }
+            })
+
+            if(extraDeps.length) {
+                var allDeps = extraDeps.filter(function(d){
+                    return deps.indexOf(d) === -1;
+                })
+                .concat(deps.filter(function(d){
+                    return subRoutines.indexOf(d) === -1;
+                }))
+                .concat(subRoutines);
+
+                deps = uniqueDeps(allDeps);
+            }
+
+            console.log(deps);
 
             if(Array.isArray(deps)){
                 deps.forEach(function(dep){
