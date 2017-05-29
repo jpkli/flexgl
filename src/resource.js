@@ -1,5 +1,3 @@
-if(typeof(define) !== 'function') var define = require('amdefine')(module);
-
 define(function(require){
     var Uniform = require('./uniform'),
         Attribute = require('./attribute'),
@@ -29,7 +27,7 @@ define(function(require){
             res.resourceType = type;
             gpuResources[res.name] = res;
             if(!gpuResources.hasOwnProperty(res.name)) {
-                
+
                 Object.defineProperty(gpuResources, res.name, {
                     get: function() { return gpuResources[res.name];},
                     set: function(data) { gpuResources[res.name].load(data); }

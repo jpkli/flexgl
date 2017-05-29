@@ -132,7 +132,6 @@ define(function(require){
             return Object.keys(names);
         }
 
-
         shader.create = function(arg, fn){
             var option = arg || {},
                 name = option.name || "default",
@@ -156,6 +155,13 @@ define(function(require){
                     subRoutines.push(res.name);
                     var subDeps = getExtraDeps(res.fn.toString());
                     if(subDeps.length) {
+                        //TODO: make this recursive to check all subroutine deps
+                        subDeps.forEach(function(sdep){
+                            var sres = resource.get(sdep);
+                            if(sres.resourceType == 'subroutine')
+                                extraDeps = extraDeps.concat(getExtraDeps(sres.fn.toString()));
+                        })
+
                         extraDeps = extraDeps.concat(subDeps);
                     }
                 }
@@ -173,8 +179,6 @@ define(function(require){
                 deps = uniqueDeps(allDeps);
             }
 
-            console.log(deps);
-
             if(Array.isArray(deps)){
                 deps.forEach(function(dep){
                     shaderSource += declareDep(dep);
@@ -188,7 +192,8 @@ define(function(require){
             }
 
             shaderSource += toGLSL('void', 'main', main);
-            if(debug) console.log(shaderSource);
+            if(debug)
+                console.log(shaderSource);
             var _shader = compile(shaderType[type], shaderSource);
             _shader._shaderType = shaderType[type];
             _shader.deps = deps;

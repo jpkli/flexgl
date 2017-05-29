@@ -41,7 +41,15 @@ define(function(require){
                 ctx.bindTexture(ctx.TEXTURE_2D, this.texture.ptr);
                 this.texture.location = ctx.getUniformLocation(program, this.texture.name);
                 ctx.uniform1i(this.texture.location, this.texture.index);
-            }
+            };
+
+            framebuffer[name].delete = function() {
+                ctx.bindRenderbuffer(gl.RENDERBUFFER, null);
+                ctx.bindFramebuffer(gl.FRAMEBUFFER, null);
+                ctx.deleteRenderbuffer(this.renderbuffer);
+                ctx.deleteTexture(this.texture.ptr)
+                ctx.deleteFramebuffer(this.ptr);
+            };
 
             return framebuffer[name];
         }

@@ -1,16 +1,3 @@
-# FlexGL - A declarative JavaScript library for developing WebGL based applications.
-
-## Beta Warning: still in pre-beta/alpha quality !!!
-
-## Core Features
-* A declarative syntax with JavaScript for programming shaders (no need to write in GLSL) !
-* Flexible management of GPU resources, functions, and programs.
-* Forward and backward compatibility
-
-## Example
-
-```javascript
-//Create context
 var fxgl = new FlexGL({
     container: document.body,
     width: 800,
@@ -44,4 +31,3 @@ fxgl.attribute.aVertexPos = [
 fxgl.uniform.uColor = [0.0, 0.5, 0.5, 1.0]
 
 simpleDraw(6); // draw rectangle
-```

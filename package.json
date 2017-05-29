@@ -1,18 +1,19 @@
 {
   "name": "flexgl",
   "version": "0.1.0",
-  "description": "A wraper library for WebGL.",
+  "description": "A declarative JavaScript library for WebGL based applicaions.",
   "main": "flexgl.js",
   "directories": {
     "example": "example",
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "./node_modules/requirejs/bin/r.js -o baseUrl=./src/ name=flexgl out=flexgl.min.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jpkli/flexgl.git"
+    "url": "https://github.com/jpkli/flexgl.git"
   },
   "keywords": [
     "webgl",
@@ -20,9 +21,14 @@
     "html5"
   ],
   "author": "Kelvin Li",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/jpkli/flexgl/issues"
   },
-  "homepage": "https://github.com/jpkli/flexgl#readme"
+  "homepage": "https://github.com/jpkli/flexgl#readme",
+  "devDependencies": {
+    "amdefine": "^1.0.1",
+    "browserify": "^14.4.0",
+    "deamdify": "^0.3.0"
+  }
 }

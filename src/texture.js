@@ -37,18 +37,18 @@ define(function(require){
         }
 
         // TODO: Add support for texture compression
-        function compressTexture(texData) {
-
-            var ext = (
-              ctx.getExtension("WEBGL_compressed_texture_s3tc") ||
-              ctx.getExtension("MOZ_WEBGL_compressed_texture_s3tc") ||
-              ctx.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc")
-            );
-
-            ctx.compressedTexImage2D(ctx.TEXTURE_2D, 0, ext.COMPRESSED_RGBA_S3TC_DXT3_EXT, texture[name].dim[0], texture[name].dim[1], 0, texData);
-            ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MAG_FILTER, ctx.LINEAR);
-            ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MIN_FILTER, ctx.LINEAR);
-        }
+        // function compressTexture(texData) {
+        //
+        //     var ext = (
+        //       ctx.getExtension("WEBGL_compressed_texture_s3tc") ||
+        //       ctx.getExtension("MOZ_WEBGL_compressed_texture_s3tc") ||
+        //       ctx.getExtension("WEBKIT_WEBGL_compressed_texture_s3tc")
+        //     );
+        //
+        //     ctx.compressedTexImage2D(ctx.TEXTURE_2D, 0, ext.COMPRESSED_RGBA_S3TC_DXT3_EXT, texture[name].dim[0], texture[name].dim[1], 0, texData);
+        //     ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MAG_FILTER, ctx.LINEAR);
+        //     ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MIN_FILTER, ctx.LINEAR);
+        // }
 
         texture.create = function(name, type, dim, channel, data, sampler) {
             texture[name] = {
@@ -68,6 +68,8 @@ define(function(require){
 
             if(texture[name].sampler === null) {
                 texture[name].sampler = Uniform(ctx).create(name, 'sampler2D', texture[name]);
+            } else {
+                texture[name].sampler.data = texture[name];
             }
 
             texture[name].link = function(program) {
@@ -76,6 +78,9 @@ define(function(require){
                     // ctx.bindTexture(ctx.TEXTURE_2D, this.ptr);
                     // this.location = ctx.getUniformLocation(program, this.name);
                     // ctx.uniform1i(this.location, this.index);
+                    if(typeof(this.sampler.data) == 'undefined' || this.sampler.data === null)
+                        this.sampler.data = texture[name];
+
                     this.sampler.link(program);
                 }
                 return this;
@@ -84,6 +89,21 @@ define(function(require){
             texture[name].load = function(texData) {
                 setTexture(this.name, texData);
                 return this;
+            }
+
+            texture[name].copyFromFBO = function() {
+                ctx.bindTexture(ctx.TEXTURE_2D, this.ptr);
+                ctx.copyTexImage2D(
+                    ctx.TEXTURE_2D,
+                    0,
+                    ctx.RGBA,
+                    0,
+                    0,
+                    this.dim[0],
+                    this.dim[1],
+                    0
+                );
+                ctx.bindTexture(ctx.TEXTURE_2D, null);
             }
 
             texture[name].update = function(texData, offset, dim) {
@@ -101,7 +121,10 @@ define(function(require){
             }
 
             texture[name].header = function() {
-                return 'uniform sampler2D ' + this.sampler.name + ';\n';
+                if(this.name == this.sampler.name)
+                    return 'uniform sampler2D ' + this.sampler.name + ';\n';
+                else
+                    return '';
             }
 
             return texture[name];

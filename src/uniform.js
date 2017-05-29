@@ -46,10 +46,16 @@ define(function(require){
                     ctx.uniform1i(location, data.index);
                 }
             }
-
         }
 
         uniform.create = function(name, type, data) {
+
+            if(Array.isArray(data)) {
+                var hasArray = data.filter(function(d){return Array.isArray(d);});
+                if(hasArray)
+                    data = serializeArray(data);
+            }
+
             uniform[name] = {
                 type: type,
                 name: name,
@@ -76,7 +82,7 @@ define(function(require){
                     len = 0;
 
                 if(this.type != 'sampler2D') {
-                    len = this.data.length / this.size
+                    len = this.data.length / this.size;
                 }
 
                 //TODO: fix declaration for matrix
