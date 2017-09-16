@@ -46,15 +46,15 @@ define(function(require){
                 // .replace(/\$(.*?)\./g, "$1 ")
 
             if(name == "main") {
-                glsl = glsl.replace(/function.+\(\s*([\s\S]*?)\s*{/, '){') + "\n";
+                glsl = glsl.replace(/function.*\(\s*([\s\S]*?)\s*{/, '){') + "\n";
             } else {
-                var args = glsl.match(/function.+\(\s*([\s\S]*?)\s*\)/)[1];
+                var args = glsl.match(/function.*\(\s*([\s\S]*?)\s*\)/)[1];
 
                 if(args != "") {
                     args = args.replace(/\$([\w|\d]+)_/g, "$1 ");
                 }
                 glsl = glsl
-                    .replace(/function.+\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
+                    .replace(/function.*\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
 
             }
 
@@ -65,7 +65,6 @@ define(function(require){
             if (shaderType !== ctx.VERTEX_SHADER && shaderType !== ctx.FRAGMENT_SHADER) {
                 throw ("Error: unknown shader type");
             }
-
             var _shader = ctx.createShader(shaderType);
             ctx.shaderSource(_shader, shaderSource);
             ctx.compileShader(_shader);
@@ -83,14 +82,19 @@ define(function(require){
         }
 
         function getDeps(fn) {
-            var sourceCode = fn.toString(),
-                args = sourceCode.match(/function\s.*?\(([^)]*)\)/)[1];
+            var deps = [],
+                sourceCode = fn.toString(),
+                shaderArgs = sourceCode.match(/function\s.*?\(([^)]*)\)/),
+                args = (shaderArgs !== null && shaderArgs.length) ? shaderArgs[1] : [];
             // args = args.replace(/(?:\r\n|\r|\n|\s)/g, '');
-            var deps = args.split(',').map(function(arg) {
-                return arg.replace(/\/\*.*\*\//, '').trim();
-            }).filter(function(arg) {
-                return arg;
-            });
+            //
+            if(args.length) {
+                deps = args.split(',').map(function(arg) {
+                    return arg.replace(/\/\*.*\*\//, '').trim();
+                }).filter(function(arg) {
+                    return arg;
+                });
+            }
 
             var extraDeps = getExtraDeps(sourceCode);
             if(extraDeps.length) {
