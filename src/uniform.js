@@ -26,7 +26,7 @@ define(function(require){
                     data = serializeArray(data);
             }
 
-            if((type == 'float' || type == 'int') && !Array.isArray(data))
+            if((type == 'float' || type == 'int') && !Array.isArray(data) && !ArrayBuffer.isView(data))
                 data = [data];
 
             var buf;
