@@ -1,5 +1,3 @@
-if(typeof(define) !== 'function') var define = require('amdefine')(module);
-
 define(function(require){
     var Uniform = require('./uniform');
     return function Texture(glContext) {

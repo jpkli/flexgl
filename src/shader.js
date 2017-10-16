@@ -1,5 +1,3 @@
-if(typeof(define) !== 'function') var define = require('amdefine')(module);
-
 define(function(require){
     return function Shader(glContext, glResource, glslParameters) {
         'use strict';
@@ -16,26 +14,7 @@ define(function(require){
             fragment: ctx.FRAGMENT_SHADER
         };
 
-        function applyEnvParameters(str){
-            //find all $(...) and replace them with parameters
-            var envParam = Object.keys(parameters);
-            if(envParam.length > 0){
-                var re = new RegExp("\\$\\(("+envParam.join("|")+")\\)","g");
-                str = str.replace(re, function(matched){
-                    return parameters[matched.slice(2,matched.length-1)];
-                });
-            }
-
-            // Make uniforms to be used as parameters in shaders, like $(uniformName)
-            // var envUniforms = Object.keys(resource.uniform);
-            // re = new RegExp("\\$\\(("+envUniforms.join("|")+")\\)","g");
-            // str = str.replace(re, function(matched){
-            //     return resource.uniform[matched.slice(2,matched.length-1)].data;
-            // });
-
-            return str;
-        }
-
+        // Convert JS functions to GLSL codes
         function toGLSL(returnType, name, fn){
 
             var glsl = returnType + ' ' +
@@ -55,10 +34,29 @@ define(function(require){
                 }
                 glsl = glsl
                     .replace(/function.*\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
+            }
+            return glsl;
+        }
 
+        //set parameters in JS functions before converting to GLSL codes
+        function applyEnvParameters(str){
+            //find all $(...) and replace them with parameters
+            var envParam = Object.keys(parameters);
+            if(envParam.length > 0){
+                var re = new RegExp("\\$\\(("+envParam.join("|")+")\\)","g");
+                str = str.replace(re, function(matched){
+                    return parameters[matched.slice(2,matched.length-1)];
+                });
             }
 
-            return glsl;
+            // Make uniforms to be used as parameters in shaders, like $(uniformName)
+            // var envUniforms = Object.keys(resource.uniform);
+            // re = new RegExp("\\$\\(("+envUniforms.join("|")+")\\)","g");
+            // str = str.replace(re, function(matched){
+            //     return resource.uniform[matched.slice(2,matched.length-1)].data;
+            // });
+
+            return str;
         }
 
         function compile(shaderType, shaderSource) {

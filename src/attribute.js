@@ -1,6 +1,6 @@
 define(function(){
     return function Attribute(glContext) {
-        "use strict";
+        'use strict';
         var attribute = (this instanceof Attribute) ? this : {},
             ctx = glContext,
             attributeID = 0;

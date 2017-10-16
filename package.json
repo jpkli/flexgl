@@ -8,6 +8,7 @@
     "test": "test"
   },
   "scripts": {
+    "prepublish": "r.js -o baseUrl=./src name=flexgl out=flexgl.amd.min.js; browserify -t deamdify -t uglifyify bundle.js -o flexgl.min.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
