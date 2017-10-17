@@ -19,6 +19,19 @@ define(function(require){
 
             var glsl = returnType + ' ' +
                 name + '(' + applyEnvParameters(fn.toString())
+                .replace(
+                    /var\s+([\w|\d]+)\s*=\s*new\s+([\w|\d]+)\((.*)\)/g,
+                    function(expr, name, dtype, value){
+                        var parts;
+                        if(value)
+                            parts = [dtype.toLowerCase(), name, '=', value];
+                        else
+                            parts = [dtype.toLowerCase(), name];
+
+                        return parts.join(' ')
+                    }
+                )
+                .replace(/for\s*\(\s*var\s+/g, 'for(int ') 
                 .replace(/var\s/g, 'float ')
                 .replace(/this./g, '')
                 .replace(/\$(.*)\((.*)\)\s*(=|;)/g, "$1 $2 $3");
