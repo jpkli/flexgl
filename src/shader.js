@@ -31,7 +31,7 @@ define(function(require){
                         return parts.join(' ')
                     }
                 )
-                .replace(/for\s*\(\s*var\s+/g, 'for(int ') 
+                .replace(/for\s*\(\s*var\s+/g, 'for(int ')
                 .replace(/var\s/g, 'float ')
                 .replace(/this./g, '')
                 .replace(/\$(.*)\((.*)\)\s*(=|;)/g, "$1 $2 $3");
@@ -84,7 +84,9 @@ define(function(require){
             var compiled = ctx.getShaderParameter(_shader, ctx.COMPILE_STATUS);
             if (!compiled) {
                 var lastError = ctx.getShaderInfoLog(_shader);
+                console.log(shaderSource + '\n ====================================================');
                 throw new Error("Error compiling shader '" + _shader + "':" + lastError);
+
                 ctx.deleteShader(_shader);
                 return null;
             }
@@ -183,16 +185,19 @@ define(function(require){
             })
 
             if(extraDeps.length) {
-                var allDeps = extraDeps.filter(function(d){
-                    return deps.indexOf(d) === -1;
-                })
+                var allDeps = extraDeps
+                // .filter(function(d){
+                //     return deps.indexOf(d) === -1;
+                // })
                 .concat(deps.filter(function(d){
                     return subRoutines.indexOf(d) === -1;
                 }))
                 .concat(subRoutines);
 
                 deps = uniqueDeps(allDeps);
+
             }
+
 
             if(Array.isArray(deps)){
                 deps.forEach(function(dep){
