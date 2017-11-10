@@ -1,5 +1,6 @@
 define(function(require) {
     var Resource = require('./resource'),
+        ProgramManager = require('./program'),
         Shader = require('./shader'),
         Framebuffer = require('./framebuffer');
 
@@ -20,7 +21,6 @@ define(function(require) {
             ctx = options.context || options.ctx || null,
             kernels = {},
             program = null,
-            env = options.env || {},
             sharedFunction = options.sharedFunction || {};
 
 
@@ -49,9 +49,13 @@ define(function(require) {
         flexgl.ctx = ctx;
         flexgl.canvas = canvas;
 
+        ctx._dict = options.env || options.dict || options.dictionary || {};
+
+
         var resources = new Resource(ctx),
             framebuffers = new Framebuffer(ctx),
-            shaders = new Shader(ctx, resources, env);
+            programManager = new ProgramManager(ctx, resources),
+            shaders = new Shader(ctx, resources);
 
         var blendExt = ctx.getExtension("EXT_blend_minmax");
         if (blendExt) {
@@ -63,6 +67,8 @@ define(function(require) {
         enableExtension([
             "OES_texture_float",
             "OES_texture_float_linear",
+            // "OES_texture_half_float",
+            // "OES_texture_half_float_linear"
         ]);
 
         if (container)
@@ -73,7 +79,7 @@ define(function(require) {
             var gl = null;
             for (var i = 0; i < names.length; ++i) {
                 try {
-                    gl = canvas.getContext(names[i]);
+                    gl = canvas.getContext(names[i],  {premultipliedAlpha: false});
                 } catch (e) {}
                 if (gl) break;
             }
@@ -228,86 +234,43 @@ define(function(require) {
 
         flexgl.parameter = function(keyValuePairs) {
             Object.keys(keyValuePairs).forEach(function(key) {
-                env[key] = keyValuePairs[key];
-                if (Array.isArray(env[key])) {
+                ctx._dict[key] = keyValuePairs[key];
+                if (Array.isArray(ctx._dict[key])) {
                     var i = 0;
-                    Object.defineProperty(env, key, {
+                    Object.defineProperty(ctx._dict, key, {
                         get: function() {
                             return keyValuePairs[key][i++];
                         },
                         set: function(newArray) {
                             i = 0;
-                            env[key] = newArray;
+                            ctx._dict[key] = newArray;
                         }
                     });
+                } else if(typeof(ctx._dict[key]) == 'object') {
+                    var dictKeys = Object.keys(ctx._dict[key]);
+                    fxgl.uniform('dict'+key, 'float', dictKeys.map(d=>ctx._dict[key][d]));
                 }
             })
             return flexgl;
         }
 
-        flexgl.env = flexgl.parameter;
+        flexgl.dictionary = flexgl.parameter;
 
-        flexgl.shader = function(arg, fn) {
-            var options = arg;
-            shaders.create(options, fn);
-            return flexgl;
-        }
-
-        flexgl.shader.vertex = function(fn) {
-            var options = {
-                type: "vertex"
-            };
-            if (fn.name) options.name = fn.name;
-            return shaders.create(options, fn);
-        }
-
-        flexgl.shader.fragment = function(fn) {
-            var options = {
-                type: "fragment"
-            };
-            if (fn.name) options.name = fn.name;
-            return shaders.create(options, fn);
-        }
+        flexgl.shader = programManager.shader;
 
         flexgl.program = function(name, vs, fs) {
-            var name = name || "default",
-                vs = vs || "default",
-                fs = fs || "default",
-                deps = [];
-
-            if (!kernels.hasOwnProperty(name)) {
-
-                kernels[name] = ctx.createProgram();
-
-                var vertShader = (typeof vs == "object") ? vs : shaders.vertex[vs],
-                    fragShader = (typeof fs == "object") ? fs : shaders.fragment[fs];
-
-                // if(!shaders.vertex.hasOwnProperty(vs) || !shaders.fragment.hasOwnProperty(fs))
-                //     throw new Error("No vertex or fragment shader is provided!");
-
-                ctx.attachShader(kernels[name], vertShader);
-                ctx.attachShader(kernels[name], fragShader);
-                ctx.linkProgram(kernels[name]);
-                var linked = ctx.getProgramParameter(kernels[name], ctx.LINK_STATUS);
-                if (!linked) {
-                    var lastError = ctx.getProgramInfoLog(kernels[name]);
-                    throw ("Error in program linking:" + lastError);
-                    ctx.deleteProgram(kernels[name]);
-                    return null;
-                }
-
-                deps = deps.concat(vertShader.deps);
-                deps = deps.concat(fragShader.deps);
-                kernels[name].deps = deps;
-            }
-
-            program = kernels[name];
-            ctx.useProgram(program);
-            resources.link(program, program.deps);
+            program = programManager.program(name, vs, fs);
             return ctx;
         }
 
-        flexgl.createProgram = function(name, props) {
+        flexgl.createProgram = function(name, vs, fs) {
+            program = programManager.create(name, vs, fs);
+            return ctx;
+        }
+
+
+
+        flexgl.make = function(name, props) {
             var vs = flexgl.shader.vertex(props.vs),
                 fs = flexgl.shader.fragment(props.fs),
                 fb = props.framebuffer || null;

@@ -1,10 +1,10 @@
 define(function(require){
-    return function Shader(glContext, glResource, glslParameters) {
+    return function Shader(glContext, glResource) {
         'use strict';
         var shader = (this instanceof Shader) ? this : {},
             ctx = glContext,
             resource = glResource,
-            parameters = glslParameters || {};
+            parameters = ctx._dict || {};
 
         shader.vertex = {};
         shader.fragment = {};
