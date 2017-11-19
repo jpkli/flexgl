@@ -168,6 +168,10 @@ define(function(require){
 
             deps.forEach(function(dep){
                 var res = resource.get(dep);
+                if(typeof res == 'undefined') {
+                    console.log(dep);
+                    throw Error ('Error! Undefined variable in shader: '+  dep.name);
+                }
                 if(res.resourceType == 'subroutine') {
                     subRoutines.push(res.name);
                     var subDeps = getExtraDeps(res.fn.toString());

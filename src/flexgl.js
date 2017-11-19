@@ -35,12 +35,9 @@ define(function(require) {
         }
         // width -= padding.left + padding.right;
         // height -= padding.top + padding.bottom;
-
-
         canvas.width = width;
         canvas.height = height;
         canvas.style.position = "absolute";
-        // canvas.style.border = "1px solid #000";
         canvas.style.marginLeft = padding.left + "px";
         canvas.style.marginTop = padding.top + "px";
 
@@ -79,7 +76,7 @@ define(function(require) {
             var gl = null;
             for (var i = 0; i < names.length; ++i) {
                 try {
-                    gl = canvas.getContext(names[i],  {premultipliedAlpha: false});
+                    gl = canvas.getContext(names[i]);
                 } catch (e) {}
                 if (gl) break;
             }
@@ -267,8 +264,6 @@ define(function(require) {
             program = programManager.create(name, vs, fs);
             return ctx;
         }
-
-
 
         flexgl.make = function(name, props) {
             var vs = flexgl.shader.vertex(props.vs),
