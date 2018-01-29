@@ -49,9 +49,10 @@ define(function(require){
         // }
 
         texture.create = function(name, type, dim, channel, data, sampler) {
+            var  texIndex = (texture.hasOwnProperty(name)) ? texture[name].index : textureID++;
             texture[name] = {
                 name: name,
-                index: textureID++,
+                index: texIndex,
                 type: type || "float",
                 dim: dim || [512, 512],
                 channel: channel || "alpha",
