@@ -9,7 +9,7 @@ fxgl.attribute('aVertexPos', 'vec2', [-1, 0, 1, 1, 0, -1.0])
     .uniform('uColor', 'vec4', [0.5, 0.0, 0.5, 1.0]);
 
 //Create Program
-var simpleDraw = fxgl.createProgram('drawTriangle', {
+var simpleDraw = fxgl.app('drawTriangle', {
     vs: function() {
         gl_Position = vec4(this.aVertexPos, 0, 1.0);
     },

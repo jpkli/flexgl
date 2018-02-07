@@ -1,6 +1,6 @@
 {
   "name": "flexgl",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A declarative JavaScript library for WebGL based applicaions.",
   "main": "flexgl.js",
   "directories": {
@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "r.js -o baseUrl=./src name=flexgl out=flexgl.amd.min.js; browserify -t deamdify -t uglifyify bundle.js -o flexgl.min.js",
+    "build": "npx webpack --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,9 +27,6 @@
   },
   "homepage": "https://github.com/jpkli/flexgl#readme",
   "devDependencies": {
-    "amdefine": "^1.0.1",
-    "browserify": "^14.4.0",
-    "deamdify": "^0.3.0",
-    "uglifyify": "^4.0.4"
+    "webpack": "^3.10.0"
   }
 }

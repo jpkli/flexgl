@@ -1,32 +1,30 @@
-define(function(require){
-    return function Subroutine() {
-        "use strict";
-        var subroutine = (this instanceof Subroutine) ? this : {};
+export default function Subroutine() {
 
-        subroutine.create = function(name, type, fn) {
-            subroutine[name] = {
-                name: name,
-                type: type || 'float',
-                fn: fn,
-                resourceType: "subroutine"
-            };
+    var subroutine = (this instanceof Subroutine) ? this : {};
 
-            subroutine[name].link = function(program) {
-                return this;
-            }
-
-            subroutine[name].load = function(fn) {
-                subroutine[name].fn = fn;
-                return this;
-            }
-
-            subroutine[name].header = function() {
-                return this.fn.toString();
-            }
-
-            return subroutine[name];
+    subroutine.create = function(name, type, fn) {
+        subroutine[name] = {
+            name: name,
+            type: type || 'float',
+            fn: fn,
+            resourceType: "subroutine"
         };
 
-        return subroutine;
-    }
-});
+        subroutine[name].link = function(program) {
+            return this;
+        }
+
+        subroutine[name].load = function(fn) {
+            subroutine[name].fn = fn;
+            return this;
+        }
+
+        subroutine[name].header = function() {
+            return this.fn.toString();
+        }
+
+        return subroutine[name];
+    };
+
+    return subroutine;
+}

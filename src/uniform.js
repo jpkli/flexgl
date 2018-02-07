@@ -1,7 +1,5 @@
-define(function(require){ return Uniform });
+export default function Uniform(glContext, name, type, data) {
 
-function Uniform(glContext, name, type, data) {
-    'use strict';
     var uniform = (this instanceof Uniform) ? this : {},
         ctx = glContext;
 

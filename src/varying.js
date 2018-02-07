@@ -1,28 +1,26 @@
-define(function(require){
-    return function Varying(glContext) {
-        "use strict";
-        var varying = (this instanceof Varying) ? this : {},
-            ctx = glContext;
+export default function Varying(glContext) {
 
-        varying.create = function(name, type, size) {
-            varying[name] = {
-                name: name,
-                type: type || 'float',
-                size: size || 1,
-            };
+    var varying = (this instanceof Varying) ? this : {},
+        ctx = glContext;
 
-            varying[name].link = function() {};
+    varying.create = function(name, type, size) {
+        varying[name] = {
+            name: name,
+            type: type || 'float',
+            size: size || 1,
+        };
 
-            varying[name].header = function() {
-                var header = 'varying ' + this.type + ' ' + this.name;
-                if(this.size > 1)
-                    header += '[' + this.size + ']';
-                return header + ';\n';
-            }
+        varying[name].link = function() {};
 
-            return varying[name];
+        varying[name].header = function() {
+            var header = 'varying ' + this.type + ' ' + this.name;
+            if(this.size > 1)
+                header += '[' + this.size + ']';
+            return header + ';\n';
         }
 
-        return varying;
+        return varying[name];
     }
-});
+
+    return varying;
+}
