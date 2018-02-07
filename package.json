@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/jpkli/flexgl#readme",
   "devDependencies": {
+    "uglifyjs-webpack-plugin": "^1.1.8",
     "webpack": "^3.10.0"
   }
 }
