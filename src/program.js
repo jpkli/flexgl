@@ -22,7 +22,7 @@ export default function Program(glContext, resources) {
 
         kernels[name].vs = (typeof vs == "object") ? vs : shaders.vertex[vs];
         kernels[name].fs = (typeof fs == "object") ? fs : shaders.fragment[fs];
-        console.log(kernels[name]);
+
         ctx.attachShader(kernels[name], kernels[name].vs);
         ctx.attachShader(kernels[name], kernels[name].fs);
         ctx.linkProgram(kernels[name]);
