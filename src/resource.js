@@ -4,7 +4,8 @@ import Texture from './texture';
 import Varying from './varying';
 import Subroutine from './subroutine';
 
-export default function Resource(glContext) {
+export default function Resource(glContext) 
+{
     var resource = (this instanceof Resource) ? this : {},
         gpuResources = {};
 
@@ -16,14 +17,16 @@ export default function Resource(glContext) {
 
     var resourceTypes = ['uniform', 'attribute', 'texture', 'varying', 'subroutine'];
 
-    resource.allocate = function(type, props) {
-        if (resourceTypes.indexOf(type) === -1) {
+    resource.allocate = function(type, props) 
+    {
+        if (resourceTypes.indexOf(type) === -1) 
             throw Error("Error: Invalid resource type: " + type);
-        }
+        
         var res = resource[type].create.apply(null, Array.prototype.slice.call(arguments, 1));
         res.resourceType = type;
         gpuResources[res.name] = res;
-        if (!gpuResources.hasOwnProperty(res.name)) {
+        if (!gpuResources.hasOwnProperty(res.name)) 
+        {
             Object.defineProperty(gpuResources, res.name, {
                 get: function() {
                     return gpuResources[res.name];
@@ -36,7 +39,8 @@ export default function Resource(glContext) {
         return res;
     };
 
-    resource.link = function(program, resources) {
+    resource.link = function(program, resources) 
+    {
         var requiredResources = (Array.isArray(resources)) ? resources : Object.keys(gpuResources);
         requiredResources.forEach(function(resourceName) {
             if (gpuResources.hasOwnProperty(resourceName))
@@ -44,9 +48,8 @@ export default function Resource(glContext) {
         })
     };
 
-    resource.get = function(name) {
+    resource.get = function(name) 
         return gpuResources[name];
-    }
 
     resource.create = resource.allocate;
 

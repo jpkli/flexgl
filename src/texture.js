@@ -109,7 +109,7 @@ export default function Texture(glContext) {
             updateTexture(this.name, texData, offset, dim);
             return this;
         }
-
+        
         texture[name].resize = function(dim, data) {
             this.dim = dim;
             setTexture(this.name, data);
