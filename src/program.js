@@ -2,20 +2,19 @@ import Shader from './shader';
 
 export default function Program(glContext, resources) {
 
-    var program,
+    var program = {},
         ctx = glContext,
-        pm = {},
         kernels = {},
         shaders = new Shader(glContext, resources);
 
-    pm.create = function(name, vs, fs) {
+    program.create = function(name, vs, fs) {
         var name = name || "default",
             vs = vs || "default",
             fs = fs || "default",
             deps = [];
 
         if (kernels.hasOwnProperty(name)) {
-            pm.delete(name);
+            program.delete(name);
         }
 
         kernels[name] = ctx.createProgram();
@@ -41,18 +40,18 @@ export default function Program(glContext, resources) {
         return kernels[name];
     }
 
-    pm.use = pm.program = function(name, vs, fs) {
+    program.use = function(name, vs, fs) {
         if (kernels.hasOwnProperty(name)) {
             program = kernels[name];
             ctx.useProgram(program);
             resources.link(program, program.deps);
             return program;
         } else {
-            return pm.create(name, vs, fs);
+            return program.create(name, vs, fs);
         }
     }
 
-    pm.delete = function(name) {
+    program.delete = function(name) {
         if (kernels.hasOwnProperty(name)) {
             ctx.detachShader(kernels[name], kernels[name].vs);
             ctx.detachShader(kernels[name], kernels[name].fs);
@@ -61,13 +60,13 @@ export default function Program(glContext, resources) {
         }
     }
 
-    pm.shader = function(arg, fn) {
+    program.shader = function(arg, fn) {
         var options = arg;
         shaders.create(options, fn);
-        return pm;
+        return program;
     }
 
-    pm.shader.vertex = function(fn) {
+    program.shader.vertex = function(fn) {
         var options = {
             type: "vertex"
         };
@@ -75,7 +74,7 @@ export default function Program(glContext, resources) {
         return shaders.create(options, fn);
     }
 
-    pm.shader.fragment = function(fn) {
+    program.shader.fragment = function(fn) {
         var options = {
             type: "fragment"
         };
@@ -83,5 +82,5 @@ export default function Program(glContext, resources) {
         return shaders.create(options, fn);
     }
 
-    return pm;
+    return program;
 }

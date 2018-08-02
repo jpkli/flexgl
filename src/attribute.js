@@ -10,13 +10,13 @@ export default function Attribute(glContext)
         if(Array.isArray(data) || ArrayBuffer.isView(data))
         {
             if(!ArrayBuffer.isView(data)) 
-                data = new Float32Array(data);
+                {data = new Float32Array(data);}
             attribute[name].data = data;
             ctx.bindBuffer(ctx.ARRAY_BUFFER, attribute[name].ptr);
             ctx.bufferData(ctx.ARRAY_BUFFER, data, ctx.STATIC_DRAW);
         }
     }
-    
+
     attribute.create = function(name, type, data) 
     {
         attribute[name] = {
@@ -29,7 +29,7 @@ export default function Attribute(glContext)
         };
 
         if(data !== null && data.length) 
-            setAttribute(name, data);
+            {setAttribute(name, data);}
 
         attribute[name].link = function(program) 
         {
@@ -47,11 +47,11 @@ export default function Attribute(glContext)
         }
 
         attribute[name].header = function() 
-            return 'attribute ' + this.type + ' ' + this.name + ';\n';
+            {return 'attribute ' + this.type + ' ' + this.name + ';\n';}
         
 
         attribute[name].delete = function() 
-            ctx.deleteBuffer(this.ptr);
+            {ctx.deleteBuffer(this.ptr);}
 
         return attribute[name];
     };

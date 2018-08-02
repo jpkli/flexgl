@@ -1,5 +1,5 @@
 import Resource from './resource';
-import ProgramManager from './program';
+import Program from './program';
 import Shader from './shader';
 import Framebuffer from './framebuffer';
 
@@ -19,7 +19,7 @@ export default function FlexGL(arg) {
         },
         ctx = options.context || options.ctx || null,
         kernels = {},
-        program = null,
+        program_ = null,
         sharedFunction = options.sharedFunction || {};
 
 
@@ -50,7 +50,7 @@ export default function FlexGL(arg) {
 
     var resources = new Resource(ctx),
         framebuffers = new Framebuffer(ctx),
-        programManager = new ProgramManager(ctx, resources),
+        program = new Program(ctx, resources),
         shaders = new Shader(ctx, resources);
 
     var blendExt = ctx.getExtension("EXT_blend_minmax");
@@ -135,8 +135,8 @@ export default function FlexGL(arg) {
                 },
                 set: function(data) {
                     resources.uniform[name].load(data);
-                    if (ctx.isProgram(program))
-                        resources.uniform[name].link(program);
+                    if (ctx.isProgram(program_))
+                        resources.uniform[name].link(program_);
                 }
             });
         }
@@ -213,7 +213,7 @@ export default function FlexGL(arg) {
     }
 
     flexgl.framebuffer.enableRead = function(name) {
-        framebuffers[name].enableRead(program);
+        framebuffers[name].enableRead(program_);
     }
 
     flexgl.bindFramebuffer = function(fbName) {
@@ -252,15 +252,15 @@ export default function FlexGL(arg) {
 
     flexgl.dictionary = flexgl.parameter;
 
-    flexgl.shader = programManager.shader;
+    flexgl.shader = program.shader;
 
     flexgl.program = function(name, vs, fs) {
-        program = programManager.program(name, vs, fs);
+        program_ = program.use(name, vs, fs);
         return ctx;
     }
 
     flexgl.createProgram = function(name, vs, fs) {
-        program = programManager.create(name, vs, fs);
+        program_ = program.create(name, vs, fs);
         return ctx;
     }
 
