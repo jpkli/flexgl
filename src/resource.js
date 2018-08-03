@@ -19,8 +19,7 @@ export default function Resource(glContext)
 
     resource.allocate = function(type) 
     {
-        if (resourceTypes.indexOf(type) === -1) 
-            {throw Error("Error: Invalid resource type: " + type);}
+        if (resourceTypes.indexOf(type) === -1)  { throw Error("Error: Invalid resource type: " + type); }
         
         var res = resource[type].create.apply(null, Array.prototype.slice.call(arguments, 1));
         res.resourceType = type;
@@ -28,12 +27,8 @@ export default function Resource(glContext)
         if (!gpuResources.hasOwnProperty(res.name)) 
         {
             Object.defineProperty(gpuResources, res.name, {
-                get: function() {
-                    return gpuResources[res.name];
-                },
-                set: function(data) {
-                    gpuResources[res.name].load(data);
-                }
+                get: function() { return gpuResources[res.name];},
+                set: function(data) { gpuResources[res.name].load(data);}
             });
         }
         return res;
@@ -43,15 +38,11 @@ export default function Resource(glContext)
     {
         var requiredResources = (Array.isArray(resources)) ? resources : Object.keys(gpuResources);
         requiredResources.forEach(function(resourceName) {
-            if (gpuResources.hasOwnProperty(resourceName))
-                {gpuResources[resourceName].link(program);}
+            if (gpuResources.hasOwnProperty(resourceName)) {gpuResources[resourceName].link(program);}
         })
     };
 
-    resource.get = function(name) 
-        {return gpuResources[name];}
-
+    resource.get = function(name) {return gpuResources[name];}
     resource.create = resource.allocate;
-
     return resource;
 };

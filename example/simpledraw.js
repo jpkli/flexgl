@@ -1,3 +1,5 @@
+// var rx = new Reactive(data);
+
 var fxgl = new FlexGL({
     container: document.body,
     width: 800,

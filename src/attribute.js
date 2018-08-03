@@ -1,16 +1,17 @@
 export default function Attribute(glContext) 
 {
-    
     var attribute = (this instanceof Attribute) ? this : {},
         ctx = glContext,
         attributeID = 0;
 
     function setAttribute(name, data) 
     {
-        if(Array.isArray(data) || ArrayBuffer.isView(data))
+        if( Array.isArray(data) || ArrayBuffer.isView(data) )
         {
             if(!ArrayBuffer.isView(data)) 
-                {data = new Float32Array(data);}
+            {
+                data = new Float32Array(data);
+            }
             attribute[name].data = data;
             ctx.bindBuffer(ctx.ARRAY_BUFFER, attribute[name].ptr);
             ctx.bufferData(ctx.ARRAY_BUFFER, data, ctx.STATIC_DRAW);
