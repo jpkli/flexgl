@@ -1,8 +1,12 @@
-function Reactive(data)
+function Reactive(data, chunk)
 {
-	var reactive = (this instanceof Reactive) ? this : { pointer : -1 };
+	var reactive = (this instanceof Reactive) ? this : {
+		pointer : -1,
+		size: chunk,
+		data_all: data
+	};
 		
-	reactive.updateButton = document.querySelector('.update'),
+	reactive.updateButton = document.querySelector('.update');
 	reactive.updateClickStream = Rx.Observable.fromEvent(updateButton, 'click');
 
 	reactive.requestStream = reactive.updateClickStream.startWith('startup click')
@@ -13,12 +17,15 @@ function Reactive(data)
 
 	reactive.responseStream = reactive.requestStream
 		.flatMap(function(p){
-			return data[];
-		})	
+			return reactive.data_all.slice(p*reactive.size, (p+1)*reactive.size);
+		});
 
 	reactive.responseStream.subscribe(function(d){
-		reactive.data = d;
-	})
+		reactive.data_chunk = d;
+		reactive.sum += reactive.data_chunk.reduce(function(x,y){
+			return x+y;
+		})
+	});
 
 	return reactive;
 }
