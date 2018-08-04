@@ -7,7 +7,7 @@ function Reactive(data, chunk)
 	};
 		
 	reactive.updateButton = document.querySelector('.update');
-	reactive.updateClickStream = Rx.Observable.fromEvent(updateButton, 'click');
+	reactive.updateClickStream = Rx.Observable.fromEvent(reactive.updateButton, 'click');
 
 	reactive.requestStream = reactive.updateClickStream.startWith('startup click')
 		.flatMap(function(){

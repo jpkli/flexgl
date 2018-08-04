@@ -51,8 +51,9 @@ export default function Attribute(glContext)
             {return 'attribute ' + this.type + ' ' + this.name + ';\n';}
         
 
-        attribute[name].delete = function() 
-            {ctx.deleteBuffer(this.ptr);}
+        attribute[name].delete = function() {
+            ctx.deleteBuffer(this.ptr);
+        }
 
         return attribute[name];
     };

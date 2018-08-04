@@ -2,6 +2,7 @@ import Resource from './resource';
 import Program from './program';
 import Shader from './shader';
 import Framebuffer from './framebuffer';
+// import Reactive from './reactive';
 
 export default function FlexGL(arg) {
 
@@ -108,10 +109,10 @@ export default function FlexGL(arg) {
     flexgl.attribute = function(name, type, data) {
         resources.allocate("attribute", name, type, data);
         Object.defineProperty(flexgl.attribute, name, {
-            get: function() {
+            get(){
                 return resources.attribute[name];
             },
-            set: function(data) {
+            set(data){
                 resources.attribute[name].load(data);
             }
         });
