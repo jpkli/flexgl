@@ -66,20 +66,20 @@ export default function Program(glContext, resources) {
         return program;
     }
 
-    program.vertex = function(fn) {
+    program.vertex = function(a) {
         var options = {
             type: "vertex"
         };
-        if (fn.name) options.name = fn.name;
-        return shaders.create(options, fn);
+        // if (fn.name) options.name = fn.name;
+        return shaders.create(options, a);
     }
 
-    program.fragment = function(fn) {
+    program.fragment = function(a) {
         var options = {
             type: "fragment"
         };
-        if (fn.name) options.name = fn.name;
-        return shaders.create(options, fn);
+        // if (fn.name) options.name = fn.name;
+        return shaders.create(options, a);
     }
 
     return program;

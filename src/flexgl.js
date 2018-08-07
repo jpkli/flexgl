@@ -6,8 +6,10 @@ import Framebuffer from './framebuffer';
 
 export default function FlexGL(arg) {
 
-    var flexgl = (this instanceof FlexGL) ? this : {},
-        options = arg || {},
+    var flexgl = (this instanceof FlexGL) ? this : {};
+
+
+    var options = arg || {},
         container = options.container || null,
         canvas = options.canvas || document.createElement("canvas"),
         width = options.width || null,
@@ -21,7 +23,11 @@ export default function FlexGL(arg) {
         ctx = options.context || options.ctx || null,
         kernels = {},
         program_ = null,
-        sharedFunction = options.sharedFunction || {};
+        sharedFunction = options.sharedFunction || {},
+        resources = new Resource(ctx),
+        framebuffers = new Framebuffer(ctx),
+        program = new Program(ctx, resources),
+        shaders = new Shader(ctx, resources);
 
 
     if (typeof(canvas) == "string") {
@@ -40,26 +46,12 @@ export default function FlexGL(arg) {
     canvas.style.position = "absolute";
     canvas.style.marginLeft = padding.left + "px";
     canvas.style.marginTop = padding.top + "px";
-
-    if (ctx === null)
-        ctx = setupWebGL(canvas);
-    flexgl.ctx = ctx;
-    flexgl.canvas = canvas;
-
     ctx._dict = options.env || options.dict || options.dictionary || {};
-
-
-    var resources = new Resource(ctx),
-        framebuffers = new Framebuffer(ctx),
-        program = new Program(ctx, resources),
-        shaders = new Shader(ctx, resources);
-
     var blendExt = ctx.getExtension("EXT_blend_minmax");
     if (blendExt) {
         ctx.MAX_EXT = blendExt.MAX_EXT;
         ctx.MIN_EXT = blendExt.MIN_EXT;
     }
-
     ctx.ext = ctx.getExtension("ANGLE_instanced_arrays");
     enableExtension([
         "OES_texture_float",
@@ -67,9 +59,17 @@ export default function FlexGL(arg) {
         // "OES_texture_half_float",
         // "OES_texture_half_float_linear"
     ]);
-
     if (container)
         container.appendChild(canvas);
+
+
+    if (ctx === null)
+        ctx = setupWebGL(canvas);
+    flexgl.ctx = ctx;
+    flexgl.canvas = canvas;
+    flexgl.resources = resources;
+
+
 
     function setupWebGL(canvas) {
         var names = ["webgl", "experimental-webgl"];
@@ -96,7 +96,6 @@ export default function FlexGL(arg) {
             }
         });
     };
-
     flexgl.enableExtension = enableExtension;
 
     /**
@@ -108,17 +107,19 @@ export default function FlexGL(arg) {
      */
     flexgl.attribute = function(name, type, data) {
         resources.allocate("attribute", name, type, data);
-        Object.defineProperty(flexgl.attribute, name, { //after allocating, flexgl gets new key attribute, helping easily change attribute data.
-            get(){
-                return resources.attribute[name];
-            },
-            set(data){
-                resources.attribute[name].load(data);
-            }
-        });
+        if (!flexgl.attribute.hasOwnProperty(name)) {
+            Object.defineProperty(flexgl.attribute, name, { //after allocating, flexgl gets new key attribute, helping easily change attribute data.
+                get(){
+                    return resources.attribute[name];
+                },
+                set(data){
+                    resources.attribute[name].load(data);
+                }
+            });
+        }
         return flexgl;
     };
-    flexgl.buffer = flexgl.attribute; //alias
+    // flexgl.buffer = flexgl.attribute; //alias
 
     /**
      * Create a Uniform variable for WebGL shader programs
@@ -136,8 +137,8 @@ export default function FlexGL(arg) {
                 },
                 set: function(data) {
                     resources.uniform[name].load(data);
-                    if (ctx.isProgram(program_))
-                        resources.uniform[name].link(program_);
+                    if (ctx.isProgram(program))                    ///////////////////
+                        resources.uniform[name].link(program);        /////////////////
                 }
             });
         }
@@ -201,8 +202,8 @@ export default function FlexGL(arg) {
      */
     flexgl.framebuffer = function(name, type, dim, texture) {
         var texture = texture || resources.allocate('texture', name, type, dim, 'rgba', null);
-
         framebuffers.create(name, type, dim, texture);
+
         if (!flexgl.framebuffer.hasOwnProperty(name)) {
             Object.defineProperty(flexgl.framebuffer, name, {
                 get: function() {
@@ -214,7 +215,7 @@ export default function FlexGL(arg) {
     }
 
     flexgl.framebuffer.enableRead = function(name) {
-        framebuffers[name].enableRead(program_);
+        framebuffers[name].enableRead(program);
     }
 
     flexgl.bindFramebuffer = function(fbName) {
@@ -261,13 +262,13 @@ export default function FlexGL(arg) {
     }
 
     flexgl.createProgram = function(name, vs, fs) {
-        program_ = program.create(name, vs, fs);
+        program.create(name, vs, fs);
         return ctx;
     }
 
     flexgl.app = function(name, props) {
-        var vs = flexgl.vertex(props.vs),
-            fs = flexgl.fragment(props.fs),
+        var vs = program.vertex(props.vs),
+            fs = program.fragment(props.fs),
             fb = props.framebuffer || null;
 
         flexgl.program(name, vs, fs);
@@ -283,8 +284,6 @@ export default function FlexGL(arg) {
     flexgl.dimension = function() {
         return [canvas.width, canvas.height];
     }
-
-    flexgl.resources = resources;
 
     return flexgl;
 }

@@ -225,7 +225,7 @@ export default function Shader(glContext, glResource) {
         var shaderSource = fn;
         var _shader = compile(shaderType[type], shaderSource);
         _shader._shaderType = shaderType[type];
-        _shader.deps = deps;
+        // _shader.deps = deps;
         _shader.source = shaderSource;
         shader[type][name] = _shader;
         return _shader;
