@@ -108,7 +108,7 @@ export default function FlexGL(arg) {
      */
     flexgl.attribute = function(name, type, data) {
         resources.allocate("attribute", name, type, data);
-        Object.defineProperty(flexgl.attribute, name, {
+        Object.defineProperty(flexgl.attribute, name, { //after allocating, flexgl gets new key attribute, helping easily change attribute data.
             get(){
                 return resources.attribute[name];
             },
@@ -266,8 +266,8 @@ export default function FlexGL(arg) {
     }
 
     flexgl.app = function(name, props) {
-        var vs = flexgl.shader.vertex(props.vs),
-            fs = flexgl.shader.fragment(props.fs),
+        var vs = flexgl.vertex(props.vs),
+            fs = flexgl.fragment(props.fs),
             fb = props.framebuffer || null;
 
         flexgl.program(name, vs, fs);

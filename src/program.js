@@ -66,7 +66,7 @@ export default function Program(glContext, resources) {
         return program;
     }
 
-    program.shader.vertex = function(fn) {
+    program.vertex = function(fn) {
         var options = {
             type: "vertex"
         };
@@ -74,7 +74,7 @@ export default function Program(glContext, resources) {
         return shaders.create(options, fn);
     }
 
-    program.shader.fragment = function(fn) {
+    program.fragment = function(fn) {
         var options = {
             type: "fragment"
         };

@@ -6,7 +6,7 @@ var fxgl = new FlexGL({
 
 var typedArray = new Float32Array(1024*1024*256);
 for (var i = 0; i < typedArray.length; i++){
-    typedArray[i] = Math.random() * 100;
+    typedArray[i] = Math.random();
 }
 
 

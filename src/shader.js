@@ -151,71 +151,78 @@ export default function Shader(glContext, glResource) {
     shader.create = function(arg, fn){
         var option = arg || {},
             name = option.name || "default",
-            type = option.type || "vertex",
-            deps = option.require || option.deps || [],
-            precision = option.precision || "high",
-            debug = option.debug || false,
-            main = option.main || fn || function() {};
+            type = option.type || "vertex";
+        // var option = arg || {},
+        //     name = option.name || "default",
+        //     type = option.type || "vertex",
+        //     deps = option.require || option.deps || [],
+        //     precision = option.precision || "high",
+        //     debug = option.debug || false,
+        //     main = option.main || fn || function() {};
 
-        var shaderSource = 'precision ' + precision + 'p float;\n';
+        // var shaderSource = 'precision ' + precision + 'p float;\n';
 
-        if(deps.length === 0) deps = uniqueDeps(getDeps(main));
+        // if(deps.length === 0) deps = uniqueDeps(getDeps(main));
 
-        //get dependence from subroutines if any
-        var extraDeps = [],
-            subRoutines = [];
+        // //get dependence from subroutines if any
+        // var extraDeps = [],
+        //     subRoutines = [];
 
-        deps.forEach(function(dep){
-            var res = resource.get(dep);
-            if(typeof res == 'undefined') {
-                console.log(dep);
-                throw Error ('Error! Undefined variable in shader: '+  dep.name);
-            }
-            if(res.resourceType == 'subroutine') {
-                subRoutines.push(res.name);
-                var subDeps = getExtraDeps(res.fn.toString());
-                if(subDeps.length) {
-                    //TODO: make this recursive to check all subroutine deps
-                    subDeps.forEach(function(sdep){
-                        var sres = resource.get(sdep);
-                        if(sres.resourceType == 'subroutine')
-                            extraDeps = extraDeps.concat(getExtraDeps(sres.fn.toString()));
-                    })
+        // deps.forEach(function(dep){
+        //     var res = resource.get(dep);
+        //     if(typeof res == 'undefined') {
+        //         console.log(dep);
+        //         throw Error ('Error! Undefined variable in shader: '+  dep.name);
+        //     }
+        //     if(res.resourceType == 'subroutine') {
+        //         subRoutines.push(res.name);
+        //         var subDeps = getExtraDeps(res.fn.toString());
+        //         if(subDeps.length) {
+        //             //TODO: make this recursive to check all subroutine deps
+        //             subDeps.forEach(function(sdep){
+        //                 var sres = resource.get(sdep);
+        //                 if(sres.resourceType == 'subroutine')
+        //                     extraDeps = extraDeps.concat(getExtraDeps(sres.fn.toString()));
+        //             })
 
-                    extraDeps = extraDeps.concat(subDeps);
-                }
-            }
-        })
+        //             extraDeps = extraDeps.concat(subDeps);
+        //         }
+        //     }
+        // })
 
-        if(extraDeps.length) {
-            var allDeps = extraDeps
-            // .filter(function(d){
-            //     return deps.indexOf(d) === -1;
-            // })
-            .concat(deps.filter(function(d){
-                return subRoutines.indexOf(d) === -1;
-            }))
-            .concat(subRoutines);
+        // if(extraDeps.length) {
+        //     var allDeps = extraDeps
+        //     // .filter(function(d){
+        //     //     return deps.indexOf(d) === -1;
+        //     // })
+        //     .concat(deps.filter(function(d){
+        //         return subRoutines.indexOf(d) === -1;
+        //     }))
+        //     .concat(subRoutines);
 
-            deps = uniqueDeps(allDeps);
-        }
+        //     deps = uniqueDeps(allDeps);
+        // }
 
 
-        if(Array.isArray(deps)){
-            deps.forEach(function(dep){
-                shaderSource += declareDep(dep);
-            });
-        } else if(typeof(deps) == 'object') {
-            Object.keys(deps).forEach(function(resourceType){
-                deps[resourceType].forEach(function(dep){
-                    shaderSource += declareDep(dep);
-                });
-            })
-        }
+        // if(Array.isArray(deps)){
+        //     deps.forEach(function(dep){
+        //         shaderSource += declareDep(dep);
+        //     });
+        // } else if(typeof(deps) == 'object') {
+        //     Object.keys(deps).forEach(function(resourceType){
+        //         deps[resourceType].forEach(function(dep){
+        //             shaderSource += declareDep(dep);
+        //         });
+        //     })
+        // }
 
-        shaderSource += toGLSL('void', 'main', main);
-        if(debug)
-            console.log(shaderSource);
+        // shaderSource += toGLSL('void', 'main', main);
+
+        // if(debug)
+        //     console.log(shaderSource);
+
+
+        var shaderSource = fn;
         var _shader = compile(shaderType[type], shaderSource);
         _shader._shaderType = shaderType[type];
         _shader.deps = deps;

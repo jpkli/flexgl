@@ -15,6 +15,8 @@ export default function Attribute(glContext)
             attribute[name].data = data;
             ctx.bindBuffer(ctx.ARRAY_BUFFER, attribute[name].ptr);
             ctx.bufferData(ctx.ARRAY_BUFFER, data, ctx.STATIC_DRAW);
+            // console.log(attribute[name].ptr === attribute[name].old_ptr);
+            // attribute[name].old_ptr = attribute[name].ptr;
         }
     }
 

@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fefb21c-1d5d-4a17-a04e-6d6e801f5843" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/example/example.html" beforeDir="false" afterPath="$PROJECT_DIR$/example/example.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/simpledraw.js" beforeDir="false" afterPath="$PROJECT_DIR$/example/simpledraw.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/attribute.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/attribute.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flexgl.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/flexgl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reactive.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/reactive.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/program.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/program.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shader.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/dist/" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -106,8 +106,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/example/example.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" column="7" lean-forward="true" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
+            <state relative-caret-position="75">
+              <caret line="5" column="89" lean-forward="true" selection-start-line="5" selection-start-column="89" selection-end-line="5" selection-end-column="89" />
             </state>
           </provider>
         </entry>
@@ -228,7 +228,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3802000" />
+    <option name="totallyTimeSpent" value="4232000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="262" y="124" width="1400" height="1000" extended-state="0" />
@@ -299,8 +299,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example/example.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="7" lean-forward="true" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
+        <state relative-caret-position="75">
+          <caret line="5" column="89" lean-forward="true" selection-start-line="5" selection-start-column="89" selection-end-line="5" selection-end-column="89" />
         </state>
       </provider>
     </entry>
