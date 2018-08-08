@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fefb21c-1d5d-4a17-a04e-6d6e801f5843" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/flexgl.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/flexgl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/flexgl.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/flexgl.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/example.html" beforeDir="false" afterPath="$PROJECT_DIR$/example/example.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/simpledraw.js" beforeDir="false" afterPath="$PROJECT_DIR$/example/simpledraw.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flexgl.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/flexgl.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/program.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/program.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shader.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/shader.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/dist/" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -107,8 +110,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/example/example.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+            <state relative-caret-position="105">
+              <caret line="7" column="91" lean-forward="true" selection-start-line="7" selection-start-column="91" selection-end-line="7" selection-end-column="91" />
             </state>
           </provider>
         </entry>
@@ -162,8 +165,8 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="59" />
-    <option name="y" value="227" />
+    <option name="x" value="33" />
+    <option name="y" value="78" />
     <option name="width" value="1400" />
     <option name="height" value="878" />
   </component>
@@ -225,12 +228,12 @@
       <updated>1533167446666</updated>
       <workItem from="1533167449351" duration="687000" />
       <workItem from="1533325626586" duration="2575000" />
-      <workItem from="1533669804663" duration="926000" />
+      <workItem from="1533669804663" duration="2470000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5496000" />
+    <option name="totallyTimeSpent" value="7040000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="59" y="227" width="1400" height="878" extended-state="0" />
@@ -301,8 +304,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example/example.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        <state relative-caret-position="105">
+          <caret line="7" column="91" lean-forward="true" selection-start-line="7" selection-start-column="91" selection-end-line="7" selection-end-column="91" />
         </state>
       </provider>
     </entry>

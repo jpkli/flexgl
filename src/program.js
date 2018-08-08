@@ -14,7 +14,7 @@ export default function Program(glContext, resources) {
             deps = [];
 
         if (kernels.hasOwnProperty(name)) {
-            program.delete(name);
+            this.delete(name);
         }
 
         kernels[name] = ctx.createProgram();
@@ -30,24 +30,24 @@ export default function Program(glContext, resources) {
             var lastError = ctx.getProgramInfoLog(kernels[name]);
             throw ("Error in program linking:" + lastError);
             ctx.deleteProgram(kernels[name]);
-            return null;
         }
 
         deps = deps.concat(kernels[name].vs.deps);
         deps = deps.concat(kernels[name].fs.deps);
         kernels[name].deps = deps;
 
-        return kernels[name];
     }
 
     program.use = function(name, vs, fs) {
         if (kernels.hasOwnProperty(name)) {
-            program = kernels[name];
-            ctx.useProgram(program);
-            resources.link(program, program.deps);
-            return program;
+            ctx.useProgram(kernels[name]);
+            resources.link(kernels[name], kernels[name].deps);
+            return kernels[name];
         } else {
-            return program.create(name, vs, fs);
+            this.create(name, vs, fs);
+            ctx.useProgram(kernels[name]);
+            resources.link(kernels[name], kernels[name].deps);
+            return kernels[name];
         }
     }
 
@@ -66,20 +66,20 @@ export default function Program(glContext, resources) {
         return program;
     }
 
-    program.vertex = function(a) {
+    program.vertex = function(fn) {
         var options = {
             type: "vertex"
         };
-        // if (fn.name) options.name = fn.name;
-        return shaders.create(options, a);
+        if (fn.name) options.name = fn.name;
+        return shaders.create(options, fn);
     }
 
-    program.fragment = function(a) {
+    program.fragment = function(fn) {
         var options = {
             type: "fragment"
         };
-        // if (fn.name) options.name = fn.name;
-        return shaders.create(options, a);
+        if (fn.name) options.name = fn.name;
+        return shaders.create(options, fn);
     }
 
     return program;

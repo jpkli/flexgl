@@ -1,6 +1,5 @@
 import Resource from './resource';
 import Program from './program';
-import Shader from './shader';
 import Framebuffer from './framebuffer';
 // import Reactive from './reactive';
 
@@ -22,12 +21,8 @@ export default function FlexGL(arg) {
         },
         ctx = options.context || options.ctx || null,
         kernels = {},
-        program_ = null,
-        sharedFunction = options.sharedFunction || {},
-        resources = new Resource(ctx),
-        framebuffers = new Framebuffer(ctx),
-        program = new Program(ctx, resources),
-        shaders = new Shader(ctx, resources);
+        sharedFunction = options.sharedFunction || {};
+
 
 
     if (typeof(canvas) == "string") {
@@ -46,7 +41,21 @@ export default function FlexGL(arg) {
     canvas.style.position = "absolute";
     canvas.style.marginLeft = padding.left + "px";
     canvas.style.marginTop = padding.top + "px";
+
+
+    if (ctx === null)
+        ctx = setupWebGL(canvas);
+    flexgl.ctx = ctx;
+    flexgl.canvas = canvas;
+    flexgl.resources = resources;
     ctx._dict = options.env || options.dict || options.dictionary || {};
+
+    var resources = new Resource(ctx),
+        framebuffers = new Framebuffer(ctx),
+        program = new Program(ctx, resources),
+        realProgram = null;
+
+
     var blendExt = ctx.getExtension("EXT_blend_minmax");
     if (blendExt) {
         ctx.MAX_EXT = blendExt.MAX_EXT;
@@ -61,14 +70,6 @@ export default function FlexGL(arg) {
     ]);
     if (container)
         container.appendChild(canvas);
-
-
-    if (ctx === null)
-        ctx = setupWebGL(canvas);
-    flexgl.ctx = ctx;
-    flexgl.canvas = canvas;
-    flexgl.resources = resources;
-
 
 
     function setupWebGL(canvas) {
@@ -137,8 +138,8 @@ export default function FlexGL(arg) {
                 },
                 set: function(data) {
                     resources.uniform[name].load(data);
-                    if (ctx.isProgram(program))                    ///////////////////
-                        resources.uniform[name].link(program);        /////////////////
+                    if (ctx.isProgram(realProgram))                    ///////////////////
+                        resources.uniform[name].link(realProgram);        /////////////////
                 }
             });
         }
@@ -215,7 +216,7 @@ export default function FlexGL(arg) {
     }
 
     flexgl.framebuffer.enableRead = function(name) {
-        framebuffers[name].enableRead(program);
+        framebuffers[name].enableRead(realProgram);
     }
 
     flexgl.bindFramebuffer = function(fbName) {
@@ -253,31 +254,40 @@ export default function FlexGL(arg) {
     }
 
     flexgl.dictionary = flexgl.parameter;
-
     flexgl.shader = program.shader;
 
-    flexgl.program = function(name, vs, fs) {
-        program_ = program.use(name, vs, fs);
-        return ctx;
+    function createShader(gl, type, source) {
+        var shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+        if (success) {
+            return shader;
+        }
+        console.log(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
     }
 
-    flexgl.createProgram = function(name, vs, fs) {
-        program.create(name, vs, fs);
-        return ctx;
-    }
 
     flexgl.app = function(name, props) {
-        var vs = program.vertex(props.vs),
-            fs = program.fragment(props.fs),
+        // var vs = program.vertex(props.vs),
+        //     fs = program.fragment(props.fs),
+        //     fb = props.framebuffer || null;
+
+        var vs = createShader(ctx, ctx.VERTEX_SHADER, props.vsource),
+            fs = createShader(ctx, ctx.FRAGMENT_SHADER, props.fsource),
             fb = props.framebuffer || null;
 
-        flexgl.program(name, vs, fs);
+        realProgram = program.use(name, vs, fs);
+
+        this.attribute['a_position'].link(realProgram);
+        this.uniform['u_color'].link(realProgram);
 
         var draw = props.render || props.draw;
 
         return function(args) {
-            var gl = flexgl.program(name);
-            return draw.call(gl, args);
+            // var gl = flexgl.program(name);
+            return draw.call(ctx, args);
         }
     }
 
