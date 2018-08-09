@@ -4,10 +4,10 @@ var fxgl = new FlexGL({
     height: 600
 });
 
-// var typedArray = new Float32Array(1024*1024*256);
-// for (var i = 0; i < typedArray.length; i++){
-//     typedArray[i] = Math.random();
-// }
+var typedArray = new Float32Array(512*512);
+for (var i = 0; i < typedArray.length; i++){
+    typedArray[i] = Math.random();
+}
 
 
 // var data = typedArray;
@@ -76,20 +76,43 @@ var fxgl = new FlexGL({
 
 
 fxgl.attribute('a_position', 'vec2', [-1, 0, 1, 1, 0, -1.0])
-    .uniform('u_color', 'vec4', [0.1, 1.0, 0.75, 1.0]);
+    // .uniform('u_color', 'float', [0.2])
+    .framebuffer('meta_0', 'float', [1, 1])
+    .framebuffer('meta_1', 'float', [1, 1])
+    .texture('u_texture', 'float', typedArray, [512, 512]);
 
 //Create Program
 var simpleDraw = fxgl.app('drawTriangle', {
-    vsource: "attribute vec2 a_position;  void main() { gl_Position = vec4(a_position, 0, 1.0);}",
-    fsource: "precision highp float; uniform vec4 u_color; void main() { gl_FragColor = u_color; }",
-    render: function(len) {
-        this.drawArrays(this.TRIANGLES, 0, len);
-    }
+    vsource: `
+        attribute vec2 a_position; 
+        void main(){ 
+            gl_Position = vec4(a_position, 0, 1.0);
+        }
+    `,
+    fsource: `
+        precision highp float; 
+        uniform sampler2D u_texture;
+        float sum = 0.0; 
+        void main(){ 
+            for(float i = 0.0; i < 512.0; i++){
+                for(float j = 0.0; j < 512.0; j++){
+                    sum += texture2D(u_texture, vec2(i/512.0, j/512.0))[3];
+                }
+            }
+            sum /= 512.0 * 512.0;
+            gl_FragColor = vec4(vec3(sum), 1.0); 
+        }
+    `,
+    // render: function(len) {
+    //     this.drawArrays(this.TRIANGLES, 0, len);
+    // }
 });
 
 simpleDraw(3); // draw triangle
-
-
+//            gl_FragColor = vec4(texture2D(u_texture, vec2(217, 217))[3], texture2D(u_texture, vec2(117, 117))[3], texture2D(u_texture, vec2(0, 0))[3], 1.0); 
+    //uniform float u_color; \
+ // gl_FragColor = vec4(u_color, u_color, u_color, 1.0); \
+ //            gl_FragColor = vec4(texture2D(u_texture, vec2(0.5, 0.5))[0], texture2D(u_texture, vec2(0.2, 0.2))[0], texture2D(u_texture, vec2(0.3, 0.3))[0], 1.0); 
 
 
 

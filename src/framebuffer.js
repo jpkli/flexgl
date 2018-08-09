@@ -14,25 +14,25 @@ export default function Framebuffer(glContext) {
             width: dim[0] || 1024,
             height: dim[1] || 1024,
             texture: texture || null,
-            renderbuffer: ctx.createRenderbuffer(),
+            // renderbuffer: ctx.createRenderbuffer(),
         }
 
-        if (framebuffer[name].texture === null) {
-            var buf = (type == 'float') ?
-                new Float32Array(dim[0] * dim[1] * 4) :
-                new Uint8Array(dim[0] * dim[1] * 4);
-            framebuffer[name].texture = Texture(ctx).create(name, type, dim, "rgba", buf);
-        }
+        // if (framebuffer[name].texture === null) {
+        //     var buf = (type == 'float') ?
+        //         new Float32Array(dim[0] * dim[1] * 4) :
+        //         new Uint8Array(dim[0] * dim[1] * 4);
+        //     framebuffer[name].texture = Texture(ctx).create(name, type, dim, "rgba", buf);
+        // }
 
-        var renderbuffer = framebuffer[name].renderbuffer;
+        // var renderbuffer = framebuffer[name].renderbuffer;
         ctx.bindFramebuffer(ctx.FRAMEBUFFER, framebuffer[name].ptr);
-        ctx.bindRenderbuffer(ctx.RENDERBUFFER, renderbuffer);
-        ctx.renderbufferStorage(
-            ctx.RENDERBUFFER,
-            ctx.DEPTH_COMPONENT16,
-            framebuffer[name].width,
-            framebuffer[name].height
-        );
+        // ctx.bindRenderbuffer(ctx.RENDERBUFFER, renderbuffer);
+        // ctx.renderbufferStorage(
+        //     ctx.RENDERBUFFER,
+        //     ctx.DEPTH_COMPONENT16,
+        //     framebuffer[name].width,
+        //     framebuffer[name].height
+        // );
         ctx.framebufferTexture2D(
             ctx.FRAMEBUFFER,
             ctx.COLOR_ATTACHMENT0,
@@ -40,13 +40,13 @@ export default function Framebuffer(glContext) {
             framebuffer[name].texture.ptr,
             0
         );
-        ctx.framebufferRenderbuffer(
-            ctx.FRAMEBUFFER,
-            ctx.DEPTH_ATTACHMENT,
-            ctx.RENDERBUFFER,
-            renderbuffer
-        );
-        ctx.bindRenderbuffer(ctx.RENDERBUFFER, null);
+        // ctx.framebufferRenderbuffer(
+        //     ctx.FRAMEBUFFER,
+        //     ctx.DEPTH_ATTACHMENT,
+        //     ctx.RENDERBUFFER,
+        //     renderbuffer
+        // );
+        // ctx.bindRenderbuffer(ctx.RENDERBUFFER, null);
         ctx.bindFramebuffer(ctx.FRAMEBUFFER, null);
 
         framebuffer[name].enableRead = function(program) {

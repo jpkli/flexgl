@@ -275,19 +275,28 @@ export default function FlexGL(arg) {
         //     fb = props.framebuffer || null;
 
         var vs = createShader(ctx, ctx.VERTEX_SHADER, props.vsource),
-            fs = createShader(ctx, ctx.FRAGMENT_SHADER, props.fsource),
-            fb = props.framebuffer || null;
+            fs = createShader(ctx, ctx.FRAGMENT_SHADER, props.fsource);
+            // fb = props.framebuffer || null;
 
         realProgram = program.use(name, vs, fs);
 
         this.attribute['a_position'].link(realProgram);
-        this.uniform['u_color'].link(realProgram);
+        // this.uniform['u_color'].link(realProgram);
+        this.texture['u_texture'].link(realProgram);
 
-        var draw = props.render || props.draw;
+        // var draw = props.render || props.draw;
 
-        return function(args) {
-            // var gl = flexgl.program(name);
-            return draw.call(ctx, args);
+        // return function(args) {
+        //     // var gl = flexgl.program(name);
+        //     return draw.call(ctx, args);
+        // }
+        var i = 1;
+        this.bindFramebuffer(fbs[i%2]);
+        ctx.drawArrays(this.TRIANGLES, 0, len);
+
+        var fbs = ['meta_0', 'meta_1'];
+        for(; i < NNN; i++){
+            this.bindFramebuffer(fbs[i%2])
         }
     }
 

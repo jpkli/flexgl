@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fefb21c-1d5d-4a17-a04e-6d6e801f5843" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/flexgl.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/flexgl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/flexgl.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/flexgl.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/simpledraw.js" beforeDir="false" afterPath="$PROJECT_DIR$/example/simpledraw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/image.png" beforeDir="false" afterPath="$PROJECT_DIR$/image.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/flexgl.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/flexgl.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/dist/" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -106,8 +109,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/example/example.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" selection-start-line="16" selection-end-line="16" />
+            <state relative-caret-position="45">
+              <caret line="3" column="4" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -171,7 +174,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -193,6 +195,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -230,10 +233,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8067000" />
+    <option name="totallyTimeSpent" value="8195000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="13" y="22" width="1400" height="878" extended-state="0" />
+    <frame x="33" y="78" width="1400" height="878" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24292965" />
@@ -301,8 +304,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example/example.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        <state relative-caret-position="45">
+          <caret line="3" column="4" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
         </state>
       </provider>
     </entry>
