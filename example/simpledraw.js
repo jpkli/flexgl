@@ -4,10 +4,15 @@ var fxgl = new FlexGL({
     height: 600
 });
 
-var typedArray = new Float32Array(1024*1024);
-for (var i = 0; i < typedArray.length; i++){
-    typedArray[i] = Math.random();
+var data = [];
+for(var j = 0; j < 100; j++){
+    var typedArray = new Float32Array(1024*1024);
+    for (var i = 0; i < typedArray.length; i++){
+        typedArray[i] = Math.random();
+    }  
+    data.push(typedArray);  
 }
+
 
 
 // var data = typedArray;
@@ -76,40 +81,38 @@ for (var i = 0; i < typedArray.length; i++){
 
 
 fxgl.attribute('a_position', 'vec2', [-0.5, -0.5, 0.5, -0.5, -0.5, 0.5,
-                                        -0.5, 0.5, 0.5, -0.5, 0.5, 0.5]);
-    .attribute('a_texcoord', 'vec2', [0, 0, 0, 1, 1, 0,
-                                        0, 1, 1, 1, 1, 0,])
+                                        -0.5, 0.5, 0.5, -0.5, 0.5, 0.5])
+    .attribute('a_texcoord', 'float', [0.0, 0.0, 1.0,
+                                        1.0, 0.0, 1.0])
     // .uniform('u_color', 'float', [0.2])
-    .framebuffer('target_texture_0', 'float', [1024, 1024])
-    .framebuffer('target_texture_1', 'float', [1024, 1024])
-    .texture('u_texture', 'float', typedArray, [1024, 1024]);
+    // .framebuffer('f_target_texture_0', 'float', [10, 1])
+    // .framebuffer('f_target_texture_1', 'float', [10, 1])
+    .framebuffer('f_sum_texture', 'float', [1024, 1])
+    .texture('u_texture', 'float', data[0], [1024, 1024]);
 
 //Create Program
-var simpleDraw = fxgl.app('drawTriangle', {
+fxgl.app('drawTriangle', {
     vsource: `
         attribute vec2 a_position;
-        attribute vec2 a_texcoord; 
-        varying vec2 v_texcoord;
+        attribute float a_texcoord; 
+        varying float v_texcoord;
 
         void main(){ 
             gl_Position = vec4(a_position, 0, 1.0);
+            v_texcoord = a_texcoord;
         }
     `,
     fsource: `
         precision highp float; 
         uniform sampler2D u_texture;
-        varying vec2 v_texcoord;
-
-        float sum = 0.0; 
+        varying float v_texcoord;
 
         void main(){ 
-            for(float i = 0.0; i < 512.0; i++){
-                for(float j = 0.0; j < 512.0; j++){
-                    sum += texture2D(u_texture, vec2(i/512.0, j/512.0))[3];
-                }
+            float sum = 0.0;
+            for(float i = 0.0; i < 1024.0; i++){
+                sum += texture2D(u_texture, vec2(v_texcoord, i/1024.0)).a;
             }
-            sum /= 512.0 * 512.0;
-            gl_FragColor = vec4(vec3(sum), 1.0); 
+            gl_FragColor = vec4(0,0,0,sum); 
         }
     `,
     // render: function(len) {
@@ -117,7 +120,7 @@ var simpleDraw = fxgl.app('drawTriangle', {
     // }
 });
 
-simpleDraw(3); // draw triangle
+// simpleDraw(); // draw triangle
 //            gl_FragColor = vec4(texture2D(u_texture, vec2(217, 217))[3], texture2D(u_texture, vec2(117, 117))[3], texture2D(u_texture, vec2(0, 0))[3], 1.0); 
     //uniform float u_color; \
  // gl_FragColor = vec4(u_color, u_color, u_color, 1.0); \

@@ -278,10 +278,14 @@ export default function FlexGL(arg) {
             fs = createShader(ctx, ctx.FRAGMENT_SHADER, props.fsource);
             // fb = props.framebuffer || null;
 
+
+        this.bindFramebuffer('f_sum_texture');
+
+
         realProgram = program.use(name, vs, fs);
 
         this.attribute['a_position'].link(realProgram);
-        // this.uniform['u_color'].link(realProgram);
+        this.attribute['a_texcoord'].link(realProgram);
         this.texture['u_texture'].link(realProgram);
 
         // var draw = props.render || props.draw;
@@ -290,14 +294,9 @@ export default function FlexGL(arg) {
         //     // var gl = flexgl.program(name);
         //     return draw.call(ctx, args);
         // }
-        var i = 1;
-        this.bindFramebuffer(fbs[i%2]);
-        ctx.drawArrays(this.TRIANGLES, 0, len);
 
-        var fbs = ['meta_0', 'meta_1'];
-        for(; i < NNN; i++){
-            this.bindFramebuffer(fbs[i%2])
-        }
+        ctx.drawArrays(ctx.TRIANGLES, 0, 6);
+
     }
 
     flexgl.dimension = function() {
