@@ -53,8 +53,8 @@ function main() {
     const height = 1024;
     const border = 0;
     const format = gl.ALPHA;
-    // const type = gl.FLOAT;
-    const type = gl.UNSIGNED_BYTE;
+    const type = gl.FLOAT;
+    // const type = gl.UNSIGNED_BYTE;
 
     // var data = [];
     // for(var j = 0; j < 100; j++){
@@ -65,8 +65,8 @@ function main() {
     //     data.push(typedArray);  
     // }
 
-    // var typedArray = new Float32Array(1024*1024);
-    var typedArray = new Uint8Array(1024*1024);
+    var typedArray = new Float32Array(1024*1024);
+    // var typedArray = new Uint8Array(1024*1024);
 
     const alignment = 1;
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, alignment);
@@ -92,14 +92,19 @@ function main() {
     const internalFormat = gl.RGBA;
     const border = 0;
     const format = gl.RGBA;
-    // const type = gl.FLOAT;
-    const type = gl.UNSIGNED_BYTE;
+    const type = gl.FLOAT;
+    // const type = gl.UNSIGNED_BYTE;
     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
                   targetTextureWidth, targetTextureHeight, border,
                   format, type, null);
 
     // set the filtering so we don't need mips
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    // 
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   }

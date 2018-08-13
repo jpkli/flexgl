@@ -280,14 +280,16 @@ export default function FlexGL(arg) {
 
 
         this.bindFramebuffer('f_sum_texture');
+        ctx.viewport(0, 0, 1024, 1);
 
 
         realProgram = program.use(name, vs, fs);
-
         this.attribute['a_position'].link(realProgram);
         this.attribute['a_texcoord'].link(realProgram);
         this.texture['u_texture'].link(realProgram);
 
+        ctx.bindTexture(ctx.TEXTURE_2D, this.texture['u_texture'].ptr);
+        // this.uniform['u_texture'].link(realProgram);    
         // var draw = props.render || props.draw;
 
         // return function(args) {
