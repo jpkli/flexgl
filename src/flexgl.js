@@ -215,8 +215,8 @@ export default function FlexGL(arg) {
         return flexgl;
     }
 
-    flexgl.framebuffer.enableRead = function(name) {
-        framebuffers[name].enableRead(realProgram);
+    flexgl.framebuffer.enableRead = function(name, program) {
+        framebuffers[name].enableRead(program);
     }
 
     flexgl.bindFramebuffer = function(fbName) {
@@ -269,26 +269,33 @@ export default function FlexGL(arg) {
     }
 
 
-    flexgl.app = function(name, props) {
-        // var vs = program.vertex(props.vs),
-        //     fs = program.fragment(props.fs),
-        //     fb = props.framebuffer || null;
+    flexgl.app = function(name, props, num) {
 
         var vs = createShader(ctx, ctx.VERTEX_SHADER, props.vsource),
             fs = createShader(ctx, ctx.FRAGMENT_SHADER, props.fsource);
             // fb = props.framebuffer || null;
 
 
-        this.bindFramebuffer('f_sum_texture');
-        ctx.viewport(0, 0, 1024, 1);
+        if(num === 0){
+            ctx.viewport(0, 0, 1024, 1);
+            realProgram = program.use(name, vs, fs);
+            this.attribute['a_position'].link(realProgram);
+            this.attribute['a_texcoord'].link(realProgram);
+            this.texture['u_texture'].link(realProgram);
 
+            this.bindFramebuffer('f_sum_texture');
+        }
 
-        realProgram = program.use(name, vs, fs);
-        this.attribute['a_position'].link(realProgram);
-        this.attribute['a_texcoord'].link(realProgram);
-        this.texture['u_texture'].link(realProgram);
+        else{
+            ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
+            realProgram = program.use(name, vs, fs);
+            this.attribute['a_position'].link(realProgram);
+            this.attribute['a_texcoord'].link(realProgram);
+            
+            this.bindFramebuffer(null);
+            this.framebuffer.enableRead('f_sum_texture', realProgram);
+        }
 
-        ctx.bindTexture(ctx.TEXTURE_2D, this.texture['u_texture'].ptr);
         // this.uniform['u_texture'].link(realProgram);    
         // var draw = props.render || props.draw;
 
@@ -297,7 +304,7 @@ export default function FlexGL(arg) {
         //     return draw.call(ctx, args);
         // }
 
-        ctx.drawArrays(ctx.TRIANGLES, 0, 6);
+        ctx.drawArrays(ctx.LINES, 0, 2);
 
     }
 

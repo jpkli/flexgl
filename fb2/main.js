@@ -27,6 +27,7 @@ function main() {
 
   // lookup uniforms
   var textureLocation = gl.getUniformLocation(program, "u_texture");
+  var flagLocation = gl.getUniformLocation(program, "flag");
 
   // Create a buffer for positions
   var positionBuffer = gl.createBuffer();
@@ -65,13 +66,18 @@ function main() {
     //     data.push(typedArray);  
     // }
 
-    var typedArray = new Float32Array(1024*1024);
+    var data = new Float32Array(1024*1024);
+    for(var i = 0; i < data.length; i++){
+      data[i] = Math.random();
+    }
+
+    // var typedArray = new Float32Array(1024*1024);
     // var typedArray = new Uint8Array(1024*1024);
 
     const alignment = 1;
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, alignment);
     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border,
-                  format, type, typedArray);
+                  format, type, data);
 
     // set the filtering so we don't need mips and it's not filtered
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -82,7 +88,7 @@ function main() {
 
   // Create a texture to render to
   const targetTextureWidth = 1024;
-  const targetTextureHeight = 1024;
+  const targetTextureHeight = 1;
   const targetTexture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, targetTexture);
 
@@ -122,7 +128,7 @@ function main() {
   requestAnimationFrame(drawScene);
 
 
-  function drawCube() {
+  function drawCube(flag) {
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
 
@@ -133,7 +139,7 @@ function main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 3;          // 3 components per iteration
+    var size = 2;          // 3 components per iteration
     var type = gl.FLOAT;   // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
@@ -148,7 +154,7 @@ function main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
 
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-    var size = 2;          // 2 components per iteration
+    var size = 1;          // 2 components per iteration
     var type = gl.FLOAT;   // the data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
@@ -159,9 +165,10 @@ function main() {
 
     // Tell the shader to use texture unit 0 for u_texture
     gl.uniform1i(textureLocation, 0);
+    gl.uniform1i(flagLocation, flag);
 
     // Draw the geometry.
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.drawArrays(gl.LINES, 0, 2);
   }
 
   // Draw the scene.
@@ -178,75 +185,94 @@ function main() {
       gl.viewport(0, 0, targetTextureWidth, targetTextureHeight);
 
       // Clear the canvas AND the depth buffer.
-      // gl.clearColor(0, 0, 0, 0);   // clear to blue
-      // gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.clearColor(0, 0, 0, 0);   // clear to blue
+      gl.clear(gl.COLOR_BUFFER_BIT);
 
-      drawCube();
+      drawCube(0);
     }
 
-    // {
-    //   // render to the canvas
-    //   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    {
+      // render to the canvas
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    //   // render the cube with the texture we just rendered to
-    //   gl.bindTexture(gl.TEXTURE_2D, targetTexture);
-    //   // gl.bindTexture(gl.TEXTURE_2D, texture);
+      // render the cube with the texture we just rendered to
+      gl.bindTexture(gl.TEXTURE_2D, targetTexture);
+      // gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    //   // Tell WebGL how to convert from clip space to pixels
-    //   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      // Tell WebGL how to convert from clip space to pixels
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    //   // Clear the canvas AND the depth buffer.
-    //   gl.clearColor(0, 0, 0, 0);   // clear to white
-    //   gl.clear(gl.COLOR_BUFFER_BIT);
+      // Clear the canvas AND the depth buffer.
+      gl.clearColor(0, 0, 0, 0);   // clear to white
+      gl.clear(gl.COLOR_BUFFER_BIT);
 
-    //   drawCube(1);
-    // }
+      drawCube(1);
+    }
 
     requestAnimationFrame(drawScene);
   }
 }
 
 // Fill the buffer with the values that define a cube.
+// function setGeometry(gl) {
+//   var positions = new Float32Array(
+//     [
+//     -1.0, -1.0,  0.0,
+//     -1.0,  1.0,  0.0,
+//      1.0, -1.0,  0.0,
+//     -1.0,  1.0,  0.0,
+//      1.0,  1.0,  0.0,
+//      1.0, -1.0,  0.0,
+//     ]);
+//   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+// }
 function setGeometry(gl) {
   var positions = new Float32Array(
     [
-    -1.0, -1.0,  0.0,
-    -1.0,  1.0,  0.0,
-     1.0, -1.0,  0.0,
-    -1.0,  1.0,  0.0,
-     1.0,  1.0,  0.0,
-     1.0, -1.0,  0.0,
+    -1.0, -1.0,
+    1.0,  1.0,
     ]);
   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 }
-function setTexcoords(gl) {
-  gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(
-        [
-          0, 0,
-          0, 1,
-          1, 0,
-          0, 1,
-          1, 1,
-          1, 0,
-      ]),
-      gl.STATIC_DRAW);
-}
+// function setTexcoords(gl) {
+//   gl.bufferData(
+//       gl.ARRAY_BUFFER,
+//       new Float32Array(
+//         [
+//           0, 0,
+//           0, 1,
+//           1, 0,
+//           0, 1,
+//           1, 1,
+//           1, 0,
+//       ]),
+//       gl.STATIC_DRAW);
+// }
 // Fill the buffer with texture coordinates the cube.
 // function setTexcoords(gl) {
 //   gl.bufferData(
 //       gl.ARRAY_BUFFER,
 //       new Float32Array(
 //         [
-//           0,
-//           1,
-//           0,
-//           1,
-//           1,
-//           0,
+//           0.0, 0.0,
+//           1.0, 0.0,
+//           0.0, 0.0,
+//           1.0, 0.0,
+//           1.0, 0.0,
+//           0.0, 0.0,
 //       ]),
 //       gl.STATIC_DRAW);
 // }
+function setTexcoords(gl) {
+  gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(
+        [
+          0.0,
+          1.0,
+      ]),
+      gl.STATIC_DRAW);
+}
+
 
 main();

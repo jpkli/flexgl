@@ -5,9 +5,8 @@
 <!-- vertex shader -->
 <script id="3d-vertex-shader" type="x-shader/x-vertex">
 attribute vec4 a_position;
-attribute vec2 a_texcoord;
-
-varying vec2 v_texcoord;
+attribute float a_texcoord;
+varying float v_texcoord;
 
 void main() {
   gl_Position = a_position;
@@ -17,11 +16,22 @@ void main() {
 <!-- fragment shader -->
 <script id="3d-fragment-shader" type="x-shader/x-fragment">
 precision highp float; 
-varying vec2 v_texcoord;
+varying float v_texcoord;
 uniform sampler2D u_texture;
+uniform int flag;
 
-void main() {
-	gl_FragColor = texture2D(u_texture, v_texcoord);
+void main(){
+  if(flag == 0){
+    float sum = 0.0;
+    for(float i = 0.0; i < 1024.0; i++){
+      sum += texture2D(u_texture, vec2(v_texcoord, (i+0.5)/1024.0)).a;
+    }
+    sum /= 1024.0;
+    gl_FragColor = vec4(0.0, texture2D(u_texture, vec2(v_texcoord, (88.0+0.5)/1024.0)).a, 0.0, 1.0);
+  }
+  else{
+    gl_FragColor = texture2D(u_texture, vec2(v_texcoord,0.5));
+  }
 }
 </script>
 
