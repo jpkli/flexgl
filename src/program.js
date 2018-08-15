@@ -7,6 +7,18 @@ export default function Program(glContext, resources) {
         kernels = {},
         shaders = new Shader(glContext, resources);
 
+    function createShader(gl, type, source) {
+        var shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+        if (success) {
+            return shader;
+        }
+        console.log(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+    }
+
     program.create = function(name, vs, fs) {
         var name = name || "default",
             vs = vs || "default",
@@ -38,12 +50,14 @@ export default function Program(glContext, resources) {
 
     }
 
-    program.use = function(name, vs, fs) {
+    program.use = function(name, vsource, fsource) {
         if (kernels.hasOwnProperty(name)) {
             ctx.useProgram(kernels[name]);
             resources.link(kernels[name], kernels[name].deps);
             return kernels[name];
         } else {
+            var vs = createShader(ctx, ctx.VERTEX_SHADER, vsource);
+            var fs = createShader(ctx, ctx.FRAGMENT_SHADER, fsource);
             this.create(name, vs, fs);
             ctx.useProgram(kernels[name]);
             resources.link(kernels[name], kernels[name].deps);
