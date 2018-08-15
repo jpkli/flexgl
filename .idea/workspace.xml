@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fefb21c-1d5d-4a17-a04e-6d6e801f5843" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/example/example.html" beforeDir="false" afterPath="$PROJECT_DIR$/example/example.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/simpledraw.js" beforeDir="false" afterPath="$PROJECT_DIR$/example/simpledraw.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/flexgl.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/flexgl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/program.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/program.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/flexgl.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/dist/" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -113,7 +115,7 @@
         <entry file="file://$PROJECT_DIR$/example/example.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="240">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
             </state>
           </provider>
         </entry>
@@ -122,7 +124,7 @@
         <entry file="file://$PROJECT_DIR$/fb2/main.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="645">
-              <caret line="43" column="46" lean-forward="true" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+              <caret line="43" column="46" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -149,7 +151,7 @@
         <entry file="file://$PROJECT_DIR$/example/simpledraw.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="2640">
-              <caret line="176" selection-start-line="176" selection-end-line="176" />
+              <caret line="224" selection-start-line="224" selection-end-line="224" />
             </state>
           </provider>
         </entry>
@@ -252,12 +254,12 @@
       <workItem from="1533669804663" duration="2470000" />
       <workItem from="1533695959581" duration="1027000" />
       <workItem from="1534182531124" duration="2643000" />
-      <workItem from="1534194875238" duration="1575000" />
+      <workItem from="1534194875238" duration="2114000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12426000" />
+    <option name="totallyTimeSpent" value="12965000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="384" y="182" width="1399" height="1062" extended-state="0" />
@@ -329,21 +331,21 @@
     <entry file="file://$PROJECT_DIR$/example/simpledraw.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2640">
-          <caret line="176" selection-start-line="176" selection-end-line="176" />
+          <caret line="224" selection-start-line="224" selection-end-line="224" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fb2/main.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="645">
-          <caret line="43" column="46" lean-forward="true" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+          <caret line="43" column="46" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/example/example.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
     </entry>
