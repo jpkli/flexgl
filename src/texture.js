@@ -6,7 +6,8 @@ export default function Texture(glContext) {
         ctx = glContext,
         textureID = 0;
 
-    function setTexture(name, texData) {
+    function setTexture(name, texData) 
+    {
         var type = ctx[texture[name].type.toUpperCase()],
             format = ctx[texture[name].channel.toUpperCase()],
             width = texture[name].dim[0],
@@ -109,7 +110,7 @@ export default function Texture(glContext) {
             updateTexture(this.name, texData, offset, dim);
             return this;
         }
-
+        
         texture[name].resize = function(dim, data) {
             this.dim = dim;
             setTexture(this.name, data);

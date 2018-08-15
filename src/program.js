@@ -2,20 +2,31 @@ import Shader from './shader';
 
 export default function Program(glContext, resources) {
 
-    var program,
+    var program = {},
         ctx = glContext,
-        pm = {},
         kernels = {},
         shaders = new Shader(glContext, resources);
 
-    pm.create = function(name, vs, fs) {
+    function createShader(gl, type, source) {
+        var shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+        if (success) {
+            return shader;
+        }
+        console.log(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+    }
+
+    program.create = function(name, vs, fs) {
         var name = name || "default",
             vs = vs || "default",
             fs = fs || "default",
             deps = [];
 
         if (kernels.hasOwnProperty(name)) {
-            pm.delete(name);
+            this.delete(name);
         }
 
         kernels[name] = ctx.createProgram();
@@ -31,28 +42,30 @@ export default function Program(glContext, resources) {
             var lastError = ctx.getProgramInfoLog(kernels[name]);
             throw ("Error in program linking:" + lastError);
             ctx.deleteProgram(kernels[name]);
-            return null;
         }
 
         deps = deps.concat(kernels[name].vs.deps);
         deps = deps.concat(kernels[name].fs.deps);
         kernels[name].deps = deps;
 
-        return kernels[name];
     }
 
-    pm.use = pm.program = function(name, vs, fs) {
+    program.use = function(name, vsource, fsource) {
         if (kernels.hasOwnProperty(name)) {
-            program = kernels[name];
-            ctx.useProgram(program);
-            resources.link(program, program.deps);
-            return program;
+            ctx.useProgram(kernels[name]);
+            resources.link(kernels[name], kernels[name].deps);
+            return kernels[name];
         } else {
-            return pm.create(name, vs, fs);
+            var vs = createShader(ctx, ctx.VERTEX_SHADER, vsource);
+            var fs = createShader(ctx, ctx.FRAGMENT_SHADER, fsource);
+            this.create(name, vs, fs);
+            ctx.useProgram(kernels[name]);
+            resources.link(kernels[name], kernels[name].deps);
+            return kernels[name];
         }
     }
 
-    pm.delete = function(name) {
+    program.delete = function(name) {
         if (kernels.hasOwnProperty(name)) {
             ctx.detachShader(kernels[name], kernels[name].vs);
             ctx.detachShader(kernels[name], kernels[name].fs);
@@ -61,13 +74,13 @@ export default function Program(glContext, resources) {
         }
     }
 
-    pm.shader = function(arg, fn) {
+    program.shader = function(arg, fn) {
         var options = arg;
         shaders.create(options, fn);
-        return pm;
+        return program;
     }
 
-    pm.shader.vertex = function(fn) {
+    program.vertex = function(fn) {
         var options = {
             type: "vertex"
         };
@@ -75,7 +88,7 @@ export default function Program(glContext, resources) {
         return shaders.create(options, fn);
     }
 
-    pm.shader.fragment = function(fn) {
+    program.fragment = function(fn) {
         var options = {
             type: "fragment"
         };
@@ -83,5 +96,5 @@ export default function Program(glContext, resources) {
         return shaders.create(options, fn);
     }
 
-    return pm;
+    return program;
 }

@@ -214,8 +214,10 @@ export default function Shader(glContext, glResource) {
         }
 
         shaderSource += toGLSL('void', 'main', main);
+
         if(debug)
             console.log(shaderSource);
+
         var _shader = compile(shaderType[type], shaderSource);
         _shader._shaderType = shaderType[type];
         _shader.deps = deps;
