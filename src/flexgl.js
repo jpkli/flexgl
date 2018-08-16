@@ -215,9 +215,9 @@ export default function FlexGL(arg) {
         return flexgl;
     }
 
-    flexgl.framebuffer.enableRead = function(name, program) {
-        framebuffers[name].enableRead(program);
-    }
+    // flexgl.framebuffer.enableRead = function(name, program) {
+    //     framebuffers[name].enableRead(program);
+    // }
 
     flexgl.bindFramebuffer = function(fbName) {
         if (fbName === null)
@@ -257,78 +257,77 @@ export default function FlexGL(arg) {
     flexgl.shader = program.shader;
 
 
-    flexgl.app = function(name, props, num) {
+    flexgl.app = function(name, source, num) {
 
-        // fb = props.framebuffer || null;
+        // fb = source.framebuffer || null;
 
         if(num === 0){
             ctx.viewport(0, 0, 1024, 1);
-            realProgram = program.use(name, props.vsource, props.fsource);
-            this.attribute['a_position'].link(realProgram);
-            this.attribute['a_texcoord'].link(realProgram);
-            this.texture['u_texture'].link(realProgram);
-
+            realProgram = program.use(name, source.vsource, source.fsource);
+            // this.attribute['a_position'].link(realProgram);
+            // this.attribute['a_texcoord'].link(realProgram);
+            // this.texture['u_texture'].link(realProgram);
             this.bindFramebuffer('f_sum_texture');
         }
 
         else if(num === 1){
             ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
-            realProgram = program.use(name, props.vsource, props.fsource);
-            this.attribute['a_position'].link(realProgram);
-            this.attribute['a_texcoord'].link(realProgram);
+            realProgram = program.use(name, source.vsource, source.fsource);
+            // this.attribute['a_position'].link(realProgram);
+            // this.attribute['a_texcoord'].link(realProgram);
             
             this.bindFramebuffer(null);
-            this.framebuffer.enableRead('f_sum_texture', realProgram);
+            // this.framebuffer.enableRead('f_sum_texture', realProgram);
         }
 
         else if(num === 2){
             this.bindFramebuffer(null);
 
             ctx.viewport(0, 0, 1024, 1);
-            realProgram = program.use(name, props.vsource, props.fsource);
-            this.attribute['a_position'].link(realProgram);
-            this.attribute['a_texcoord'].link(realProgram);
+            realProgram = program.use(name, source.vsource, source.fsource);
+            // this.attribute['a_position'].link(realProgram);
+            // this.attribute['a_texcoord'].link(realProgram);
 
             this.bindFramebuffer('f_mem_texture_1');
-            this.framebuffer.enableRead('f_mem_texture_0', realProgram);
-            this.framebuffer.enableRead('f_sum_texture', realProgram);
+            // this.framebuffer.enableRead('f_mem_texture_0', realProgram);
+            // this.framebuffer.enableRead('f_sum_texture', realProgram);
         }
 
         else if(num === 3){
             this.bindFramebuffer(null);
 
             ctx.viewport(0, 0, 1024, 1);
-            realProgram = program.use(name, props.vsource, props.fsource);
-            this.attribute['a_position'].link(realProgram);
-            this.attribute['a_texcoord'].link(realProgram);
+            realProgram = program.use(name, source.vsource, source.fsource);
+            // this.attribute['a_position'].link(realProgram);
+            // this.attribute['a_texcoord'].link(realProgram);
 
             this.bindFramebuffer('f_mem_texture_0');
-            this.framebuffer.enableRead('f_mem_texture_1', realProgram);
-            this.framebuffer.enableRead('f_sum_texture', realProgram);
+            // this.framebuffer.enableRead('f_mem_texture_1', realProgram);
+            // this.framebuffer.enableRead('f_sum_texture', realProgram);
         }
 
         else if(num === 4){
             ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
-            realProgram = program.use(name, props.vsource, props.fsource);
-            this.attribute['a_position'].link(realProgram);
-            this.attribute['a_texcoord'].link(realProgram);
+            realProgram = program.use(name, source.vsource, source.fsource);
+            // this.attribute['a_position'].link(realProgram);
+            // this.attribute['a_texcoord'].link(realProgram);
             
             this.bindFramebuffer(null);
-            this.framebuffer.enableRead('f_mem_texture_1', realProgram);
+            // this.framebuffer.enableRead('f_mem_texture_1', realProgram);
         }
 
         else if(num === 5){
             ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
-            realProgram = program.use(name, props.vsource, props.fsource);
-            this.attribute['a_position'].link(realProgram);
-            this.attribute['a_texcoord'].link(realProgram);
+            realProgram = program.use(name, source.vsource, source.fsource);
+            // this.attribute['a_position'].link(realProgram);
+            // this.attribute['a_texcoord'].link(realProgram);
             
             this.bindFramebuffer(null);
-            this.framebuffer.enableRead('f_mem_texture_0', realProgram);
+            // this.framebuffer.enableRead('f_mem_texture_0', realProgram);
         }
 
         // this.uniform['u_texture'].link(realProgram);    
-        // var draw = props.render || props.draw;
+        // var draw = source.render || source.draw;
 
         // return function(args) {
         //     // var gl = flexgl.program(name);
@@ -336,7 +335,6 @@ export default function FlexGL(arg) {
         // }
 
         ctx.drawArrays(ctx.LINES, 0, 2);
-
     }
 
     flexgl.dimension = function() {

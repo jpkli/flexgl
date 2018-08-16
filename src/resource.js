@@ -24,6 +24,7 @@ export default function Resource(glContext)
         var res = resource[type].create.apply(null, Array.prototype.slice.call(arguments, 1));
         res.resourceType = type;
         gpuResources[res.name] = res;
+
         if (!gpuResources.hasOwnProperty(res.name)) 
         {
             Object.defineProperty(gpuResources, res.name, {
@@ -34,15 +35,19 @@ export default function Resource(glContext)
         return res;
     };
 
-    resource.link = function(program, resources) 
-    {
-        var requiredResources = (Array.isArray(resources)) ? resources : Object.keys(gpuResources);
-        requiredResources.forEach(function(resourceName) {
-            if (gpuResources.hasOwnProperty(resourceName)) {gpuResources[resourceName].link(program);}
+    resource.link = function(program, resource_names) {
+        var requiredResourceNames = (Array.isArray(resource_names)) ? resource_names : Object.keys(gpuResources);
+        requiredResourceNames.forEach(function(resourceName) {
+            if (gpuResources.hasOwnProperty(resourceName)) {
+                gpuResources[resourceName].link(program);
+            }
         })
     };
 
-    resource.get = function(name) {return gpuResources[name];}
+    resource.get = function(name) {
+        return gpuResources[name];
+    }
     resource.create = resource.allocate;
+
     return resource;
 };

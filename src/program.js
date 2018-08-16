@@ -4,8 +4,8 @@ export default function Program(glContext, resources) {
 
     var program = {},
         ctx = glContext,
-        kernels = {},
-        shaders = new Shader(glContext, resources);
+        kernels = {};
+        // shaders = new Shader(glContext, resources);
 
     function createShader(gl, type, source) {
         var shader = gl.createShader(type);
@@ -30,9 +30,10 @@ export default function Program(glContext, resources) {
         }
 
         kernels[name] = ctx.createProgram();
-
-        kernels[name].vs = (typeof vs == "object") ? vs : shaders.vertex[vs];
-        kernels[name].fs = (typeof fs == "object") ? fs : shaders.fragment[fs];
+        kernels[name].vs = vs;
+        kernels[name].fs = fs;
+        // kernels[name].vs = (typeof vs == "object") ? vs : shaders.vertex[vs];
+        // kernels[name].fs = (typeof fs == "object") ? fs : shaders.fragment[fs];
 
         ctx.attachShader(kernels[name], kernels[name].vs);
         ctx.attachShader(kernels[name], kernels[name].fs);
@@ -55,9 +56,27 @@ export default function Program(glContext, resources) {
             ctx.useProgram(kernels[name]);
             resources.link(kernels[name], kernels[name].deps);
             return kernels[name];
-        } else {
+        } 
+        else {
             var vs = createShader(ctx, ctx.VERTEX_SHADER, vsource);
             var fs = createShader(ctx, ctx.FRAGMENT_SHADER, fsource);
+
+            vs.deps = [];
+            vsource.split(['\n']).forEach(function(v){
+                var tmp_array = v.split([' ', ';']);
+                if(tmp_array[0] === 'attribute' || tmp_array[0] === 'uniform'){
+                    vs.deps.push(tmp_array[2]);
+                }
+            })
+
+            fs.deps = [];
+            fsource.split(['\n']).forEach(function(v){
+                var tmp_array = v.split([' ', ';']);
+                if(tmp_array[0] === 'attribute' || tmp_array[0] === 'uniform'){
+                    fs.deps.push(tmp_array[2]);
+                }
+            })
+
             this.create(name, vs, fs);
             ctx.useProgram(kernels[name]);
             resources.link(kernels[name], kernels[name].deps);
