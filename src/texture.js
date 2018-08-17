@@ -73,7 +73,7 @@ export default function Texture(glContext) {
         }
 
         texture[name].link = function(program) {
-            if (this.data !== null) {
+            // if (this.data !== null) {
                 // ctx.activeTexture(ctx.TEXTURE0 + this.index);
                 // ctx.bindTexture(ctx.TEXTURE_2D, this.ptr);
                 // this.location = ctx.getUniformLocation(program, this.name);
@@ -82,7 +82,9 @@ export default function Texture(glContext) {
                     this.sampler.data = texture[name];
 
                 this.sampler.link(program);
-            }
+            // }else{
+            //     console.log('texture data is null!!!')
+            // }
             return this;
         }
 

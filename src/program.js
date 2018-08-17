@@ -51,6 +51,16 @@ export default function Program(glContext, resources) {
 
     }
 
+    function addDeps(source, deps){
+        var re = /\s*(attribute|uniform)\s+\w+\s+(\w+)/;        
+        source.split('\n').forEach(function(v){
+            var result = re.exec(v);
+            if(result){
+                deps.push(result[2]);
+            }
+        });
+    }
+
     program.use = function(name, vsource, fsource) {
         if (kernels.hasOwnProperty(name)) {
             ctx.useProgram(kernels[name]);
@@ -62,21 +72,10 @@ export default function Program(glContext, resources) {
             var fs = createShader(ctx, ctx.FRAGMENT_SHADER, fsource);
 
             vs.deps = [];
-            vsource.split(['\n']).forEach(function(v){
-                var tmp_array = v.split([' ', ';']);
-                if(tmp_array[0] === 'attribute' || tmp_array[0] === 'uniform'){
-                    vs.deps.push(tmp_array[2]);
-                }
-            })
-
+            addDeps(vsource, vs.deps);
             fs.deps = [];
-            fsource.split(['\n']).forEach(function(v){
-                var tmp_array = v.split([' ', ';']);
-                if(tmp_array[0] === 'attribute' || tmp_array[0] === 'uniform'){
-                    fs.deps.push(tmp_array[2]);
-                }
-            })
-
+            addDeps(fsource, fs.deps);
+ 
             this.create(name, vs, fs);
             ctx.useProgram(kernels[name]);
             resources.link(kernels[name], kernels[name].deps);
@@ -93,27 +92,27 @@ export default function Program(glContext, resources) {
         }
     }
 
-    program.shader = function(arg, fn) {
-        var options = arg;
-        shaders.create(options, fn);
-        return program;
-    }
+    // program.shader = function(arg, fn) {
+    //     var options = arg;
+    //     shaders.create(options, fn);
+    //     return program;
+    // }
 
-    program.vertex = function(fn) {
-        var options = {
-            type: "vertex"
-        };
-        if (fn.name) options.name = fn.name;
-        return shaders.create(options, fn);
-    }
+    // program.vertex = function(fn) {
+    //     var options = {
+    //         type: "vertex"
+    //     };
+    //     if (fn.name) options.name = fn.name;
+    //     return shaders.create(options, fn);
+    // }
 
-    program.fragment = function(fn) {
-        var options = {
-            type: "fragment"
-        };
-        if (fn.name) options.name = fn.name;
-        return shaders.create(options, fn);
-    }
+    // program.fragment = function(fn) {
+    //     var options = {
+    //         type: "fragment"
+    //     };
+    //     if (fn.name) options.name = fn.name;
+    //     return shaders.create(options, fn);
+    // }
 
     return program;
 }

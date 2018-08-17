@@ -49,16 +49,16 @@ export default function Framebuffer(glContext) {
         // ctx.bindRenderbuffer(ctx.RENDERBUFFER, null);
         ctx.bindFramebuffer(ctx.FRAMEBUFFER, null);
 
-        // framebuffer[name].enableRead = function(program) {
-        //     ctx.activeTexture(ctx.TEXTURE0 + this.texture.index);
-        //     ctx.bindTexture(ctx.TEXTURE_2D, this.texture.ptr);
-        //     this.texture.location = ctx.getUniformLocation(program, this.texture.name);
-        //     ctx.uniform1i(this.texture.location, this.texture.index);
-        // };
-
         framebuffer[name].enableRead = function(program) {
-            this.texture.link(program);
+            ctx.activeTexture(ctx.TEXTURE0 + this.texture.index);
+            ctx.bindTexture(ctx.TEXTURE_2D, this.texture.ptr);
+            this.texture.location = ctx.getUniformLocation(program, this.texture.name);
+            ctx.uniform1i(this.texture.location, this.texture.index);
         };
+
+        // framebuffer[name].enableRead = function(program) {
+        //     this.texture.link(program);
+        // };
 
         framebuffer[name].delete = function() {
             ctx.bindRenderbuffer(gl.RENDERBUFFER, null);
