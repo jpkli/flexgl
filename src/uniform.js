@@ -38,6 +38,7 @@ export default function Uniform(glContext, name, type, data) {
             ctx['uniformMatrix' + size + 'fv'](location, false, buf);
         } else if(type == 'sampler2D') {
             if(data.hasOwnProperty('resourceType') && data.resourceType == 'texture') {
+                // console.log('bind ' + data.index);
                 ctx.activeTexture(ctx.TEXTURE0 + data.index);
                 ctx.bindTexture(ctx.TEXTURE_2D, data.ptr);
                 ctx.uniform1i(location, data.index);

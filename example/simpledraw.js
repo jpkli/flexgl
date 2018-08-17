@@ -14,25 +14,165 @@ fxgl.attribute('a_position', 'vec2', [-1.0, -1.0, 1.0, 1.0])
     .framebuffer('f_mem_texture_0', 'float', [1024, 1], fxgl.texture['f_mem_texture_0'])
     .framebuffer('f_mem_texture_1', 'float', [1024, 1], fxgl.texture['f_mem_texture_1']);
 
-var data = [];
+var sumData = fxgl.app('sumData', {
+    vertex_shader_source: `
+        attribute vec2 a_position;
+        attribute float a_texcoord; 
+        varying float v_texcoord;
+
+        void main(){ 
+            gl_Position = vec4(a_position, 0, 1.0);
+            v_texcoord = a_texcoord;
+        }
+    `,
+    fragment_shader_source: `
+        precision highp float; 
+        uniform sampler2D u_texture;
+        varying float v_texcoord;
+
+        void main(){ 
+            float sum = 0.0;
+            for(float i = 0.0; i < 1024.0; i++){
+                sum += texture2D(u_texture, vec2(v_texcoord, (i+0.5)/1024.0)).a;
+            }
+            sum /= 1024.0;
+            gl_FragColor = vec4(sum, 0.0, 0.0, 1.0);
+
+        }
+    `,
+    render: function(args){
+        this.ctx.viewport(0, 0, 1024, 1);
+        this.bindFramebuffer('f_sum_texture');
+        this.ctx.drawArrays(this.ctx.LINES, 0, 2);
+    }
+});
+
+var swingDataA = fxgl.app('swingDataA', {
+    vertex_shader_source: `
+        attribute vec2 a_position;
+        attribute float a_texcoord; 
+        varying float v_texcoord;
+
+        void main(){ 
+            gl_Position = vec4(a_position, 0, 1.0);
+            v_texcoord = a_texcoord;
+        }
+    `,
+    fragment_shader_source: `
+        precision highp float; 
+        uniform sampler2D f_sum_texture;
+        uniform sampler2D f_mem_texture_0;
+        varying float v_texcoord;
+
+        void main(){
+            float v0 = texture2D(f_sum_texture, vec2(v_texcoord, 0.5)).x;
+            float v1 = texture2D(f_mem_texture_0, vec2(v_texcoord, 0.5)).x;
+            gl_FragColor = vec4(v0+v1, 0.0, 0.0, 1.0);
+        }
+    `,
+    render: function(args){
+        this.ctx.viewport(0, 0, 1024, 1);
+        this.bindFramebuffer('f_mem_texture_1');
+        this.ctx.drawArrays(this.ctx.LINES, 0, 2);
+    }
+});    
+
+var drawDataA = fxgl.app('drawDataA', {
+    vertex_shader_source: `
+        attribute vec2 a_position;
+        attribute float a_texcoord; 
+        varying float v_texcoord;
+
+        void main(){ 
+            gl_Position = vec4(a_position, 0, 1.0);
+            v_texcoord = a_texcoord;
+        }
+    `,
+    fragment_shader_source: `
+        precision highp float; 
+        uniform sampler2D f_mem_texture_1;
+        varying float v_texcoord;
+
+        void main(){
+            gl_FragColor = texture2D(f_mem_texture_1, vec2(v_texcoord, 0.5));
+        }
+    `,
+    render: function(args){
+        this.ctx.viewport(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.bindFramebuffer(null);
+        this.ctx.drawArrays(this.ctx.LINES, 0, 2);  
+    }
+});
+
+var swingDataB = fxgl.app('swingDataB', {
+    vertex_shader_source: `
+        attribute vec2 a_position;
+        attribute float a_texcoord; 
+        varying float v_texcoord;
+
+        void main(){ 
+            gl_Position = vec4(a_position, 0, 1.0);
+            v_texcoord = a_texcoord;
+        }
+    `,
+    fragment_shader_source: `
+        precision highp float; 
+        uniform sampler2D f_sum_texture;
+        uniform sampler2D f_mem_texture_1;
+        varying float v_texcoord;
+
+        void main(){
+            float v0 = texture2D(f_sum_texture, vec2(v_texcoord, 0.5)).x;
+            float v1 = texture2D(f_mem_texture_1, vec2(v_texcoord, 0.5)).x;
+            gl_FragColor = vec4(v0+v1, 0.0, 0.0, 1.0);
+        }
+    `,
+    render: function(args){
+        this.ctx.viewport(0, 0, 1024, 1);
+        this.bindFramebuffer('f_mem_texture_0');
+        this.ctx.drawArrays(this.ctx.LINES, 0, 2);
+    }
+});   
+
+var drawDataB = fxgl.app('drawDataB', {
+    vertex_shader_source: `
+        attribute vec2 a_position;
+        attribute float a_texcoord; 
+        varying float v_texcoord;
+
+        void main(){ 
+            gl_Position = vec4(a_position, 0, 1.0);
+            v_texcoord = a_texcoord;
+        }
+    `,
+    fragment_shader_source: `
+        precision highp float; 
+        uniform sampler2D f_mem_texture_0;
+        varying float v_texcoord;
+
+        void main(){
+            gl_FragColor = texture2D(f_mem_texture_0, vec2(v_texcoord, 0.5));
+        }
+    `,
+    render: function(args){
+        this.ctx.viewport(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.bindFramebuffer(null);
+        this.ctx.drawArrays(this.ctx.LINES, 0, 2);
+    }
+});
+
+var total_data = [];
 for(var j = 0; j < 100; j++){
     var typedArray = new Float32Array(1024*1024);
     for (var i = 0; i < typedArray.length; i++){
         typedArray[i] = Math.random()/100;
     }  
-    data.push(typedArray);  
+    total_data.push(typedArray);  
 }
 
 
-// var data = new Float32Array(1024*1024);
-// for (var i = 0; i < data.length; i++){
-//     data[i] = Math.random();
-// }  
-  
-
 var pointer = -1;
 
-        
 var updateButton = document.querySelector('.update');
 var updateClickStream = Rx.Observable.fromEvent(updateButton, 'click');
 
@@ -48,8 +188,10 @@ var requestStream = updateClickStream.startWith('startup click')
 
 var responseStream = requestStream
     .map(function(p){
-        return data[pointer];
+        return total_data[pointer];
     });
+
+
 
 var i = 0;
 responseStream.subscribe(function(data_chunk){
@@ -59,135 +201,16 @@ responseStream.subscribe(function(data_chunk){
     else{
         fxgl.texture['u_texture'] = data_chunk;
     }
-    fxgl.app('drawLine0', {
-        vsource: `
-            attribute vec2 a_position;
-            attribute float a_texcoord; 
-            varying float v_texcoord;
 
-            void main(){ 
-                gl_Position = vec4(a_position, 0, 1.0);
-                v_texcoord = a_texcoord;
-            }
-        `,
-        fsource: `
-            precision highp float; 
-            uniform sampler2D u_texture;
-            varying float v_texcoord;
-
-            void main(){ 
-                float sum = 0.0;
-                for(float i = 0.0; i < 1024.0; i++){
-                    sum += texture2D(u_texture, vec2(v_texcoord, (i+0.5)/1024.0)).a;
-                }
-                sum /= 1024.0;
-                gl_FragColor = vec4(sum, 0.0, 0.0, 1.0);
-
-            }
-        `,
-    }, 0);
-
-
-
+    sumData();
     if(i%2 === 0){
-        fxgl.app('drawLine2', {
-            vsource: `
-                attribute vec2 a_position;
-                attribute float a_texcoord; 
-                varying float v_texcoord;
-
-                void main(){ 
-                    gl_Position = vec4(a_position, 0, 1.0);
-                    v_texcoord = a_texcoord;
-                }
-            `,
-            fsource: `
-                precision highp float; 
-                uniform sampler2D f_sum_texture;
-                uniform sampler2D f_mem_texture_0;
-                varying float v_texcoord;
-
-                void main(){
-                    float v0 = texture2D(f_sum_texture, vec2(v_texcoord, 0.5)).x;
-                    float v1 = texture2D(f_mem_texture_0, vec2(v_texcoord, 0.5)).x;
-                    gl_FragColor = vec4(v0+v1, 0.0, 0.0, 1.0);
-                }
-            `,
-        }, 2);    
-
-        fxgl.app('drawLine4', {
-            vsource: `
-                attribute vec2 a_position;
-                attribute float a_texcoord; 
-                varying float v_texcoord;
-
-                void main(){ 
-                    gl_Position = vec4(a_position, 0, 1.0);
-                    v_texcoord = a_texcoord;
-                }
-            `,
-            fsource: `
-                precision highp float; 
-                uniform sampler2D f_mem_texture_1;
-                varying float v_texcoord;
-
-                void main(){
-                    gl_FragColor = texture2D(f_mem_texture_1, vec2(v_texcoord, 0.5));
-                }
-            `,
-        }, 4);
-
+        swingDataA();
+        drawDataA();
     }
     else{
-        fxgl.app('drawLine3', {
-            vsource: `
-                attribute vec2 a_position;
-                attribute float a_texcoord; 
-                varying float v_texcoord;
-
-                void main(){ 
-                    gl_Position = vec4(a_position, 0, 1.0);
-                    v_texcoord = a_texcoord;
-                }
-            `,
-            fsource: `
-                precision highp float; 
-                uniform sampler2D f_sum_texture;
-                uniform sampler2D f_mem_texture_1;
-                varying float v_texcoord;
-
-                void main(){
-                    float v0 = texture2D(f_sum_texture, vec2(v_texcoord, 0.5)).x;
-                    float v1 = texture2D(f_mem_texture_1, vec2(v_texcoord, 0.5)).x;
-                    gl_FragColor = vec4(v0+v1, 0.0, 0.0, 1.0);
-                }
-            `,
-        }, 3);   
-
-        fxgl.app('drawLine5', {
-            vsource: `
-                attribute vec2 a_position;
-                attribute float a_texcoord; 
-                varying float v_texcoord;
-
-                void main(){ 
-                    gl_Position = vec4(a_position, 0, 1.0);
-                    v_texcoord = a_texcoord;
-                }
-            `,
-            fsource: `
-                precision highp float; 
-                uniform sampler2D f_mem_texture_0;
-                varying float v_texcoord;
-
-                void main(){
-                    gl_FragColor = texture2D(f_mem_texture_0, vec2(v_texcoord, 0.5));
-                }
-            `,
-        }, 5);
-
+        swingDataB();
+        drawDataB();
     }
-
     i++;
 });
 

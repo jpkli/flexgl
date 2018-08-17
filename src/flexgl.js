@@ -257,86 +257,89 @@ export default function FlexGL(arg) {
     flexgl.shader = program.shader;
 
 
-    flexgl.app = function(name, source, num) {
+    flexgl.app = function(name, options) {
 
-        // fb = source.framebuffer || null;
-
-        if(num === 0){
-            ctx.viewport(0, 0, 1024, 1);
-            realProgram = program.use(name, source.vsource, source.fsource);
-            // this.attribute['a_position'].link(realProgram);
-            // this.attribute['a_texcoord'].link(realProgram);
-            // this.texture['u_texture'].link(realProgram);
-            this.bindFramebuffer('f_sum_texture');
+        return function(args){
+            realProgram = program.use(name, options.vertex_shader_source, options.fragment_shader_source);
+            return options.render.call(flexgl, args);
         }
 
-        else if(num === 1){
-            ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
-            realProgram = program.use(name, source.vsource, source.fsource);
-            // this.attribute['a_position'].link(realProgram);
-            // this.attribute['a_texcoord'].link(realProgram);
+
+        // if(num === 0){
+        //     ctx.viewport(0, 0, 1024, 1);
+        //     realProgram = program.use(name, options.vertex_shader_source, options.fragment_shader_source);
+        //     this.bindFramebuffer('f_sum_texture');
+
+        //     // this.attribute['a_position'].link(realProgram);
+        //     // this.attribute['a_texcoord'].link(realProgram);
+        //     // this.texture['u_texture'].link(realProgram);
+        // }
+
+        // else if(num === 1){
+        //     ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
+        //     realProgram = program.use(name, options.vertex_shader_source, options.fragment_shader_source);
             
-            this.bindFramebuffer(null);
-            // this.framebuffer.enableRead('f_sum_texture', realProgram);
-        }
+        //     this.bindFramebuffer(null);
+        //     // this.attribute['a_position'].link(realProgram);
+        //     // this.attribute['a_texcoord'].link(realProgram);
+        //     // this.framebuffer.enableRead('f_sum_texture', realProgram);
+        // }
 
-        else if(num === 2){
-            this.bindFramebuffer(null);
+        // else if(num === 2){
+        //     this.bindFramebuffer(null);
 
-            ctx.viewport(0, 0, 1024, 1);
-            this.bindFramebuffer('f_mem_texture_1');
-            realProgram = program.use(name, source.vsource, source.fsource);
-            // this.attribute['a_position'].link(realProgram);
-            // this.attribute['a_texcoord'].link(realProgram);
+        //     ctx.viewport(0, 0, 1024, 1);
+        //     this.bindFramebuffer('f_mem_texture_1');
+        //     realProgram = program.use(name, options.vertex_shader_source, options.fragment_shader_source);
 
+        //     // this.attribute['a_position'].link(realProgram);
+        //     // this.attribute['a_texcoord'].link(realProgram);
+        //     // this.framebuffer.enableRead('f_mem_texture_0', realProgram);
+        //     // this.framebuffer.enableRead('f_sum_texture', realProgram);
+        // }
 
-            // this.framebuffer.enableRead('f_mem_texture_0', realProgram);
-            // this.framebuffer.enableRead('f_sum_texture', realProgram);
-        }
+        // else if(num === 3){
+        //     this.bindFramebuffer(null);
 
-        else if(num === 3){
-            this.bindFramebuffer(null);
+        //     ctx.viewport(0, 0, 1024, 1);
+        //     this.bindFramebuffer('f_mem_texture_0');
+        //     realProgram = program.use(name, options.vertex_shader_source, options.fragment_shader_source);
 
-            ctx.viewport(0, 0, 1024, 1);
-            this.bindFramebuffer('f_mem_texture_0');
-            realProgram = program.use(name, source.vsource, source.fsource);
-            // this.attribute['a_position'].link(realProgram);
-            // this.attribute['a_texcoord'].link(realProgram);
+        //     // this.attribute['a_position'].link(realProgram);
+        //     // this.attribute['a_texcoord'].link(realProgram);
+        //     // this.framebuffer.enableRead('f_mem_texture_1', realProgram);
+        //     // this.framebuffer.enableRead('f_sum_texture', realProgram);
+        // }
 
-            // this.framebuffer.enableRead('f_mem_texture_1', realProgram);
-            // this.framebuffer.enableRead('f_sum_texture', realProgram);
-        }
+        // else if(num === 4){
+        //     this.bindFramebuffer(null); 
+        //     ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
+        //     realProgram = program.use(name, options.vertex_shader_source, options.fragment_shader_source);
 
-        else if(num === 4){
-            this.bindFramebuffer(null); 
-            ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
-            realProgram = program.use(name, source.vsource, source.fsource);
-            // this.attribute['a_position'].link(realProgram);
-            // this.attribute['a_texcoord'].link(realProgram);
-            
+        //     // this.attribute['a_position'].link(realProgram);
+        //     // this.attribute['a_texcoord'].link(realProgram);
+        //     // this.framebuffer.enableRead('f_mem_texture_1', realProgram);
+        // }
 
-            // this.framebuffer.enableRead('f_mem_texture_1', realProgram);
-        }
+        // else if(num === 5){
+        //     this.bindFramebuffer(null);
+        //     ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
+        //     realProgram = program.use(name, options.vertex_shader_source, options.fragment_shader_source);
 
-        else if(num === 5){
-            this.bindFramebuffer(null);
-            ctx.viewport(0, 0, ctx.canvas.width, ctx.canvas.height);
-            realProgram = program.use(name, source.vsource, source.fsource);
-            // this.attribute['a_position'].link(realProgram);
-            // this.attribute['a_texcoord'].link(realProgram);
-            
-            // this.framebuffer.enableRead('f_mem_texture_0', realProgram);
-        }
+        //     // this.attribute['a_position'].link(realProgram);
+        //     // this.attribute['a_texcoord'].link(realProgram);
+        //     // this.framebuffer.enableRead('f_mem_texture_0', realProgram);
+        // }
 
         // this.uniform['u_texture'].link(realProgram);    
-        // var draw = source.render || source.draw;
+        // var draw = options.render || options.draw;
 
         // return function(args) {
         //     // var gl = flexgl.program(name);
         //     return draw.call(ctx, args);
         // }
 
-        ctx.drawArrays(ctx.LINES, 0, 2);
+        // ctx.drawArrays(ctx.LINES, 0, 2);
     }
 
     flexgl.dimension = function() {
