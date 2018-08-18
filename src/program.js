@@ -4,20 +4,8 @@ export default function Program(glContext, resources) {
 
     var program = {},
         ctx = glContext,
-        kernels = {};
-        // shaders = new Shader(glContext, resources);
-
-    function createShader(gl, type, source) {
-        var shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-        if (success) {
-            return shader;
-        }
-        console.log(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-    }
+        kernels = {},
+        shader = new Shader(glContext);
 
     program.create = function(name, vs, fs) {
         var name = name || "default",
@@ -32,8 +20,6 @@ export default function Program(glContext, resources) {
         kernels[name] = ctx.createProgram();
         kernels[name].vs = vs;
         kernels[name].fs = fs;
-        // kernels[name].vs = (typeof vs == "object") ? vs : shaders.vertex[vs];
-        // kernels[name].fs = (typeof fs == "object") ? fs : shaders.fragment[fs];
 
         ctx.attachShader(kernels[name], kernels[name].vs);
         ctx.attachShader(kernels[name], kernels[name].fs);
@@ -51,32 +37,15 @@ export default function Program(glContext, resources) {
 
     }
 
-    function addDeps(source, deps){
-        var re = /\s*(attribute|uniform)\s+\w+\s+(\w+)/;        
-        source.split('\n').forEach(function(v){
-            var result = re.exec(v);
-            if(result){
-                deps.push(result[2]);
-            }
-        });
-    }
-
-    program.use = function(name, vsource, fsource) {
+    program.use = function(name, vertex_shader_source, fragment_shader_source) {
         if (kernels.hasOwnProperty(name)) {
             ctx.useProgram(kernels[name]);
             resources.link(kernels[name], kernels[name].deps);
             return kernels[name];
         } 
         else {
-            var vs = createShader(ctx, ctx.VERTEX_SHADER, vsource);
-            var fs = createShader(ctx, ctx.FRAGMENT_SHADER, fsource);
-
-            vs.deps = [];
-            addDeps(vsource, vs.deps);
-            fs.deps = [];
-            addDeps(fsource, fs.deps);
- 
-            this.create(name, vs, fs);
+            shader.create(name, vertex_shader_source, fragment_shader_source);
+            this.create(name, shader[name].vs, shader[name].fs);
             ctx.useProgram(kernels[name]);
             resources.link(kernels[name], kernels[name].deps);
             return kernels[name];
@@ -91,28 +60,6 @@ export default function Program(glContext, resources) {
             delete kernels[name];
         }
     }
-
-    // program.shader = function(arg, fn) {
-    //     var options = arg;
-    //     shaders.create(options, fn);
-    //     return program;
-    // }
-
-    // program.vertex = function(fn) {
-    //     var options = {
-    //         type: "vertex"
-    //     };
-    //     if (fn.name) options.name = fn.name;
-    //     return shaders.create(options, fn);
-    // }
-
-    // program.fragment = function(fn) {
-    //     var options = {
-    //         type: "fragment"
-    //     };
-    //     if (fn.name) options.name = fn.name;
-    //     return shaders.create(options, fn);
-    // }
 
     return program;
 }
