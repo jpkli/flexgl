@@ -20,6 +20,7 @@ export default function FlexGL(arg) {
         ctx = options.context || options.ctx || null,
         kernels = {},
         program = null,
+        glAttr = options.attributes || {},
         sharedFunction = options.sharedFunction || {};
 
 
@@ -75,7 +76,7 @@ export default function FlexGL(arg) {
         var gl = null;
         for (var i = 0; i < names.length; ++i) {
             try {
-                gl = canvas.getContext(names[i]);
+                gl = canvas.getContext(names[i], glAttr);
             } catch (e) {}
             if (gl) break;
         }

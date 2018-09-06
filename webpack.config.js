@@ -3,8 +3,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
     entry: {
-        "flexgl": "./src/bundle.js",
-        "flexgl.min": "./src/bundle.js"
+        "flexgl": "./index.js",
+        "flexgl.min": "./index.js"
     },
     devtool: "inline-source-map",
     output: {
