@@ -11,12 +11,25 @@ export default function Uniform(glContext, name, type, data) {
         return sa;
     }
 
+    function sanitize(data) {
+        if(Array.isArray(data)) {
+            var hasArray = data.filter(function(d){return Array.isArray(d);});
+            if(hasArray.length > 0) {
+               return serializeArray(data);
+            } else {
+                return data;
+            }
+        } else {
+            return data
+        }
+    }
+
     function setUniform() {
         var type = this.type,
             location = this.location,
             size = this.size,
             data = this.data;
-
+            
         if(Array.isArray(data)) {
             var hasArray = data.filter(function(d){return Array.isArray(d);});
             if(hasArray)
@@ -49,8 +62,9 @@ export default function Uniform(glContext, name, type, data) {
 
         if(Array.isArray(data)) {
             var hasArray = data.filter(function(d){return Array.isArray(d);});
-            if(hasArray)
+            if(hasArray.length > 0) {
                 data = serializeArray(data);
+            }
         }
 
         uniform[name] = {
@@ -69,6 +83,10 @@ export default function Uniform(glContext, name, type, data) {
             return this;
         };
 
+        uniform[name].value = function(val) {
+           this.data = sanitize(val);
+        }
+
         uniform[name].load = function(data) {
             this.data = data;
             return this;
@@ -77,7 +95,7 @@ export default function Uniform(glContext, name, type, data) {
         uniform[name].header = function() {
             var header = 'uniform ' + this.type + ' ' + this.name,
                 len = 0;
-
+            
             if(this.type != 'sampler2D') {
                 len = this.data.length / this.size;
             }

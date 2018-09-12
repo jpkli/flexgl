@@ -9,8 +9,9 @@ export default function FlexGL(arg) {
         options = arg || {},
         container = options.container || null,
         canvas = options.canvas || document.createElement("canvas"),
-        width = options.width || null,
-        height = options.height || null,
+        viewport = options.viewport || [0, 0],
+        width = options.width || viewport[0] || null,
+        height = options.height || viewport[1] || null,
         padding = options.padding || {
             left: 0,
             right: 0,
@@ -218,10 +219,11 @@ export default function FlexGL(arg) {
     }
 
     flexgl.bindFramebuffer = function(fbName) {
-        if (fbName === null)
-            ctx.bindFramebuffer(ctx.FRAMEBUFFER, null);
-        else
+        if (framebuffers.hasOwnProperty(fbName)) {
             ctx.bindFramebuffer(ctx.FRAMEBUFFER, framebuffers[fbName].ptr);
+        } else {
+            ctx.bindFramebuffer(ctx.FRAMEBUFFER, null);
+        }
     }
 
     flexgl.subroutine = function(name, type, fn) {
