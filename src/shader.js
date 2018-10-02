@@ -126,6 +126,14 @@ export default function Shader(glContext, glResource) {
                 return d.slice(5);
             });
         }
+        if(extraDeps != null && extraDeps.length) {
+            extraDeps.forEach(function(sdep){
+                var sres = resource.get(sdep);
+                if(sres.resourceType == 'subroutine') {
+                    extraDeps = extraDeps.concat(getExtraDeps(sres.fn.toString()));
+                }
+            });
+        }
         return extraDeps || [];
     }
 
@@ -162,8 +170,7 @@ export default function Shader(glContext, glResource) {
         if(deps.length === 0) deps = uniqueDeps(getDeps(main));
 
         //get dependence from subroutines if any
-        var extraDeps = [],
-            subRoutines = [];
+        var extraDeps = [];
 
         deps.forEach(function(dep){
             var res = resource.get(dep);
@@ -172,40 +179,36 @@ export default function Shader(glContext, glResource) {
                 throw Error ('Error! Undefined variable in shader: '+  dep.name);
             }
             if(res.resourceType == 'subroutine') {
-                subRoutines.push(res.name);
-                var subDeps = getExtraDeps(res.fn.toString());
-                if(subDeps.length) {
-                    //TODO: make this recursive to check all subroutine deps
-                    subDeps.forEach(function(sdep){
-                        var sres = resource.get(sdep);
-                        if(sres.resourceType == 'subroutine')
-                            extraDeps = extraDeps.concat(getExtraDeps(sres.fn.toString()));
-                    })
-
-                    extraDeps = extraDeps.concat(subDeps);
-                }
-            }
+                // subRoutines.push(res.name);
+                extraDeps  = getExtraDeps(res.fn.toString());
+                
+            }   
         })
 
         if(extraDeps.length) {
-            var allDeps = extraDeps
-            // .filter(function(d){
-            //     return deps.indexOf(d) === -1;
-            // })
-            .concat(deps.filter(function(d){
-                return subRoutines.indexOf(d) === -1;
-            }))
-            .concat(subRoutines);
-
+            var allDeps = extraDeps.concat(deps);
             deps = uniqueDeps(allDeps);
         }
 
-
         if(Array.isArray(deps)){
-            deps.forEach(function(dep){
+            deps.filter(function(d){
+                return ctx.subroutineNames.indexOf(d) === -1;
+            })
+            .forEach(function(dep){
                 shaderSource += declareDep(dep);
             });
+            var t = deps.filter(function(d){
+                return ctx.subroutineNames.indexOf(d) !== -1;
+            })
+            .reverse()
+            .forEach(function(dep){
+                shaderSource += declareDep(dep);
+            });
+
+
+
         } else if(typeof(deps) == 'object') {
+            console.log(deps)
             Object.keys(deps).forEach(function(resourceType){
                 deps[resourceType].forEach(function(dep){
                     shaderSource += declareDep(dep);

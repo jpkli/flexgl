@@ -24,7 +24,7 @@ export default function FlexGL(arg) {
         glAttr = options.attributes || {},
         sharedFunction = options.sharedFunction || {};
 
-
+    
     if (typeof(canvas) == "string") {
         if (canvas[0] == "#") canvas = document.getElementById(cavnas.substring(1));
         else canvas = document.getElementById(cavnas);
@@ -48,7 +48,7 @@ export default function FlexGL(arg) {
     flexgl.canvas = canvas;
 
     ctx._dict = options.env || options.dict || options.dictionary || {};
-
+    ctx.subroutineNames = []; // save all subroutines' names 
 
     var resources = new Resource(ctx),
         framebuffers = new Framebuffer(ctx),
@@ -227,6 +227,7 @@ export default function FlexGL(arg) {
     }
 
     flexgl.subroutine = function(name, type, fn) {
+        ctx.subroutineNames.push(name);
         resources.allocate("subroutine", name, type, fn);
         return flexgl;
     }
