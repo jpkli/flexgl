@@ -32,6 +32,7 @@ export default function Shader(glContext, glResource) {
             )
             .replace(/for\s*\(\s*var\s+/g, 'for(int ')
             .replace(/var\s/g, 'float ')
+            // .replace(/(\.0)([^\d])/g, '$10000000001 $2 ')
             .replace(/this./g, '')
             .replace(/\$(.*)\((.*)\)\s*(=|;)/g, "$1 $2 $3");
             // .replace(/\$(.*?)\./g, "$1 ")
@@ -40,12 +41,19 @@ export default function Shader(glContext, glResource) {
             glsl = glsl.replace(/function.*\(\s*([\s\S]*?)\s*{/, '){') + "\n";
         } else {
             var args = glsl.match(/function.*\(\s*([\s\S]*?)\s*\)/)[1];
+            
+            var isObject = args.match(/{([\s\S]*)}/);
 
-            if(args != "") {
+            if(isObject) {
+                args = isObject[1].split(',')
+                    .map(d=>d.split('='))
+                    .map(d=> d[1].replace(/(\'|\")/g, '') + ' ' + d[0])
+                    .join(', ')
+            } else if(args != "") {
                 args = args.replace(/\$([\w|\d]+)_/g, "$1 ");
             }
-            glsl = glsl
-                .replace(/function.*\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
+           
+            glsl = glsl.replace(/function.*\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
         }
         return glsl;
     }
