@@ -38,9 +38,9 @@ export default function Shader(glContext, glResource) {
             // .replace(/\$(.*?)\./g, "$1 ")
 
         if(name == "main") {
-            glsl = glsl.replace(/function.*\(\s*([\s\S]*?)\s*{/, '){') + "\n";
+            glsl = glsl.replace(/\(.*(function|\w).*\(\s*([\s\S]*?)\s*{/, '(){') + "\n";
         } else {
-            var args = glsl.match(/function.*\(\s*([\s\S]*?)\s*\)/)[1];
+            var args = glsl.match(/function|\w.*\(\s*([\s\S]*?)\s*\)/)[1];
             
             var isObject = args.match(/{([\s\S]*)}/);
 
@@ -53,7 +53,7 @@ export default function Shader(glContext, glResource) {
                 args = args.replace(/\$([\w|\d]+)_/g, "$1 ");
             }
            
-            glsl = glsl.replace(/function.*\(\s*([\s\S]*?)\s*\)/, args+')') + "\n";
+            glsl = glsl.replace(/\(.*(function|\w).*\(\s*([\s\S]*?)\s*\)/, '(' + args+')') + "\n";
         }
         return glsl;
     }
