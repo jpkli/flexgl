@@ -23,11 +23,11 @@ export default function Texture(glContext) {
         ctx.bindTexture(ctx.TEXTURE_2D, null);
     }
 
-    function updateTexture(name, texData, offset, dim) {
+    function updateTexture(name, texData, offset = [0, 0], dim = [texture[name].dim[0], texture[name].dim[1]] ) {
         var type = ctx[texture[name].type.toUpperCase()],
             format = ctx[texture[name].channel.toUpperCase()],
-            width = dim[0] || texture[name].dim[0],
-            height = dim[1] || texture[name].dim[1];
+            width = dim[0],
+            height = dim[1];
 
         ctx.bindTexture(ctx.TEXTURE_2D, texture[name].ptr);
         ctx.texSubImage2D(ctx.TEXTURE_2D, 0, offset[0], offset[1], width, height, format, type, texData);

@@ -137,7 +137,7 @@ export default function Shader(glContext, glResource) {
         if(extraDeps != null && extraDeps.length) {
             extraDeps.forEach(function(sdep){
                 var sres = resource.get(sdep);
-                if(sres.resourceType == 'subroutine') {
+                if(sres && sres.resourceType == 'subroutine') {
                     extraDeps = extraDeps.concat(getExtraDeps(sres.fn.toString()));
                 }
             });
