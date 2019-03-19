@@ -6,7 +6,9 @@ export default function Attribute(glContext) {
 
     function setAttribute(name, data) {
         if(Array.isArray(data) || ArrayBuffer.isView(data)){
-            if(!ArrayBuffer.isView(data)) data = new Float32Array(data);
+            if(!ArrayBuffer.isView(data)) {
+                data = new Float32Array(data);
+            }
             attribute[name].data = data;
             ctx.bindBuffer(ctx.ARRAY_BUFFER, attribute[name].ptr);
             ctx.bufferData(ctx.ARRAY_BUFFER, data, ctx.STATIC_DRAW);
@@ -39,6 +41,14 @@ export default function Attribute(glContext) {
 
         attribute[name].header = function() {
             return 'attribute ' + this.type + ' ' + this.name + ';\n';
+        }
+
+        attribute[name].update = function(offset, data) {
+            if(!ArrayBuffer.isView(data)) {
+                data = new Float32Array(data);
+            }
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, this.ptr);
+            ctx.bufferSubData(ctx.ARRAY_BUFFER, offset, data);   
         }
 
         attribute[name].delete = function() {
