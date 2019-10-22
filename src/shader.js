@@ -167,7 +167,7 @@ export default function Shader(glContext, glResource) {
             name = option.name || "default",
             type = option.type || "vertex",
             deps = option.require || option.deps || [],
-            precision = option.precision || "high",
+            precision = option.precision || "medium",
             debug = option.debug || false,
             main = option.main || fn || function() {};
 
